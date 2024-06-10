@@ -6,7 +6,7 @@ import lombok.Data;
 public class ZteTrapBody {
 
     private Long id;
-
+    private Long newOrClear;
     private String trapId;
 
     private String alarmCode;

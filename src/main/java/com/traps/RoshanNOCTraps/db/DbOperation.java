@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps.db;
 
+import com.traps.RoshanNOCTraps.kafka.producer.HwTrapProducer;
 import com.traps.RoshanNOCTraps.traps.hw.HwTrapBody;
 import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,15 @@ import java.util.UUID;
 @Component
 public class DbOperation {
 
+
+
+
     public static JdbcTemplate jdbcTemplate;
 
 
     public DbOperation(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+
     }
 
 
@@ -63,7 +68,7 @@ public class DbOperation {
         }catch (Exception e){
             System.out.println("ZTE INSERT ERROR");
             e.printStackTrace();
-            return 0;
+            return -1;
         }
 
 
@@ -93,7 +98,7 @@ public class DbOperation {
         }catch(Exception e){
             System.out.println("ZTE UPDATE HAS ERROR: ");
             e.printStackTrace();
-            return 0;
+            return -1;
         }
 
 
@@ -109,7 +114,7 @@ public class DbOperation {
 
 
     public static int addHwTrap(HwTrapBody hwTrapBody) {
-        System.out.println("Here it comes insert hw");
+//        System.out.println("Here it comes insert hw");
         try{
             hwTrapBody.setId(generateUniqueId());
             String sql = """
@@ -149,7 +154,7 @@ public class DbOperation {
         }catch (Exception e){
             System.out.println("HW INSERT ERROR");
             e.printStackTrace();
-            return 0;
+            return -1;
 
         }
 
@@ -157,7 +162,7 @@ public class DbOperation {
 
 
     public static int updateHwTrap(String id, HwTrapBody hwTrapBody) {
-        System.out.println("Here it comes update hw");
+//        System.out.println("Here it comes update hw");
         try{
             String sql = """
              UPDATE nmt_trap_huawei
@@ -175,7 +180,7 @@ public class DbOperation {
         }catch (Exception e){
             System.out.println("HW UPDATE Error!!");
             e.printStackTrace();
-            return 0;
+            return -1;
         }
 
     }

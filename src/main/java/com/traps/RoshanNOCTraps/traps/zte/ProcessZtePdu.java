@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.traps.zte;
 
 import com.traps.RoshanNOCTraps.db.DbOperation;
+import com.traps.RoshanNOCTraps.db.KafkaOperation;
 import com.traps.RoshanNOCTraps.db.ZteDoa;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -84,19 +85,26 @@ public class ProcessZtePdu {
             zteTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.4")).toLong());
 
 
-            System.out.println("ZTE trap INSERT: "+zteTrapBody);
+//            System.out.println("ZTE trap INSERT: "+zteTrapBody);
+            zteTrapBody.setNewOrClear(1L);
 
+//            kafka send
+            KafkaOperation.sendZteTrap(zteTrapBody);
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("insert",pdu);
-            DbOperation.addZteTrap(zteTrapBody);
+//            DbOperation.addZteTrap(zteTrapBody);
 
         }
         else if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.2")) {
             zteTrapBody.setAlarmClearedTime(eventTime);
 
-            System.out.println("ZTE trap UPDATE: "+zteTrapBody);
+//            System.out.println("ZTE trap UPDATE: "+zteTrapBody);
 
-            DbOperation.updateZteTrap(zteTrapBody.getTrapId(),zteTrapBody);
+            zteTrapBody.setNewOrClear(2L);
+
+            KafkaOperation.sendZteTrap(zteTrapBody);
+
+//            DbOperation.updateZteTrap(zteTrapBody.getTrapId(),zteTrapBody);
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }

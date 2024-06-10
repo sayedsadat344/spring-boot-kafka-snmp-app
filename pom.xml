@@ -45,6 +45,12 @@
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
 
+<!--		kafka-->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.snmp4j/snmp4j -->
 		<dependency>
 			<groupId>org.snmp4j</groupId>

@@ -2,10 +2,13 @@ package com.traps.RoshanNOCTraps.traps.hw;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class HwTrapBody {
 
     private Long id;
+    private Long newOrClear;
 
     private String trapId;
 
@@ -40,4 +43,6 @@ public class HwTrapBody {
     private String alarmCellId;
 
     private String alarmRncId;
+
+
 }

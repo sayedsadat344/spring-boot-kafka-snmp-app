@@ -2,6 +2,7 @@ package com.traps.RoshanNOCTraps.traps.hw;
 
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import com.traps.RoshanNOCTraps.db.HwDao;
+import com.traps.RoshanNOCTraps.db.KafkaOperation;
 import com.traps.RoshanNOCTraps.db.ZteDoa;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -78,11 +79,12 @@ public class ProcessHwPdu {
 
         //1 = cleared
         //2 arrival
-        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"   =====> Is Clear Or Not:  "+clearOrNot);
+//        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"   =====> Is Clear Or Not:  "+clearOrNot);
 
         if (hwTrapBody.getAlarmClearedTime() == null || hwTrapBody.getAlarmClearedTime().isBlank() || hwTrapBody.getAlarmClearedTime().isEmpty()) {
             //site identification section
 
+            hwTrapBody.setNewOrClear(1L);
             hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
             String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
@@ -109,13 +111,21 @@ public class ProcessHwPdu {
             //setup display site id
             hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
 
-            System.out.println("HW trap INSERT: ");
+//            System.out.println("HW trap INSERT: ");
 
-            DbOperation.addHwTrap(hwTrapBody);
+
+//            produce to kafka
+            KafkaOperation.sendHwTrap(hwTrapBody);
+//            DbOperation.addHwTrap(hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("insert",pdu);
         }else{
+
+            hwTrapBody.setNewOrClear(2L);
+//            produce to kafka
+            KafkaOperation.sendHwTrap(hwTrapBody);
+
 //            System.out.println("HW trap UPDATE: "+hwTrapBody);
-            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
+//            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("update",pdu);
         }
     }
