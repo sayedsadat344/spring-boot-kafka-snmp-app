@@ -14,7 +14,7 @@ public class ZteTrapConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZteTrapConsumer.class);
 
-    @KafkaListener(topics = "ZTE_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
+//    @KafkaListener(topics = "ZTE_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(ZteTrapBody zteTrapBody, Acknowledgment acknowledgment){
 
         int opValue;

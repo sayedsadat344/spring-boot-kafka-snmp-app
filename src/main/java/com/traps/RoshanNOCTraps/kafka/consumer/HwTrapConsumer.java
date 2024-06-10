@@ -15,7 +15,7 @@ public class HwTrapConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HwTrapConsumer.class);
 
-    @KafkaListener(topics = "HW_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
+//    @KafkaListener(topics = "HW_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(HwTrapBody hwTrapBody, Acknowledgment acknowledgment){
 
 
