@@ -49,13 +49,13 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
                 new MessageDispatcherImpl());
 
         //TRANSPORT
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
 
 
 //
-//           listenAddress = GenericAddress.parse(System.getProperty(
-//             "snmp4j.listenAddress", "udp:10.150.150.35/162"));
+           listenAddress = GenericAddress.parse(System.getProperty(
+             "snmp4j.listenAddress", "udp:10.150.150.35/162"));
 
 
 
