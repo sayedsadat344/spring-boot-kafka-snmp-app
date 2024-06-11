@@ -1,6 +1,6 @@
 package com.traps.RoshanNOCTraps.kafka.producer;
 
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
+import com.mycompany.app.sharedClasses.ZteTrapBody;
 import org.springframework.messaging.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,7 @@ public class ZteTrapProducer {
                 .setHeader(KafkaHeaders.TOPIC, "ZTE_TRAPS")
                 .build();
 
+        System.out.println("ZTE TRAP PRODUCED!!");
         kafkaTemplate.send(message);
     }
 

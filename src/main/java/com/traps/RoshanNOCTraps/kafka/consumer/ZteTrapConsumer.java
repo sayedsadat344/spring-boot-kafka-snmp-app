@@ -1,11 +1,9 @@
 package com.traps.RoshanNOCTraps.kafka.consumer;
 
+import com.mycompany.app.sharedClasses.ZteTrapBody;
 import com.traps.RoshanNOCTraps.db.DbOperation;
-import com.traps.RoshanNOCTraps.traps.hw.HwTrapBody;
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps.traps.hw;
 
+import com.mycompany.app.sharedClasses.HwTrapBody;
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import com.traps.RoshanNOCTraps.db.HwDao;
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
@@ -121,6 +122,7 @@ public class ProcessHwPdu {
         }else{
 
             hwTrapBody.setNewOrClear(2L);
+            hwTrapBody.setId(DbOperation.generateUniqueId());
 //            produce to kafka
             KafkaOperation.sendHwTrap(hwTrapBody);
 

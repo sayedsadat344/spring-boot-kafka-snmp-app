@@ -1,10 +1,9 @@
 package com.traps.RoshanNOCTraps.db;
 
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
+import com.mycompany.app.sharedClasses.ZteTrapBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

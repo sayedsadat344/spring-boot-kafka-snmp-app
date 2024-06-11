@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps.traps.zte;
 
+import com.mycompany.app.sharedClasses.ZteTrapBody;
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
 import com.traps.RoshanNOCTraps.db.ZteDoa;
@@ -88,6 +89,7 @@ public class ProcessZtePdu {
 //            System.out.println("ZTE trap INSERT: "+zteTrapBody);
             zteTrapBody.setNewOrClear(1L);
 
+            zteTrapBody.setId(DbOperation.generateUniqueId());
 //            kafka send
             KafkaOperation.sendZteTrap(zteTrapBody);
             ///DATABASE CONNECTIVITY ////

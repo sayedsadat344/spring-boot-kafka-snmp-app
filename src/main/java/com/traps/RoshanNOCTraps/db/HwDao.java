@@ -1,7 +1,6 @@
 package com.traps.RoshanNOCTraps.db;
 
-import com.traps.RoshanNOCTraps.traps.hw.HwTrapBody;
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
+import com.mycompany.app.sharedClasses.HwTrapBody;
 import org.springframework.stereotype.Service;
 
 @Service

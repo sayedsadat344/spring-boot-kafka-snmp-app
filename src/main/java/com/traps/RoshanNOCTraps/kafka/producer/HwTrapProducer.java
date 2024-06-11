@@ -1,7 +1,6 @@
 package com.traps.RoshanNOCTraps.kafka.producer;
 
-import com.traps.RoshanNOCTraps.traps.hw.HwTrapBody;
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
+import com.mycompany.app.sharedClasses.HwTrapBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -23,13 +22,12 @@ public class HwTrapProducer {
 
     public void sendMessage(HwTrapBody data){
 
-//        LOGGER.info(String.format("Message sent -> %s", data.toString()));
-
         Message<HwTrapBody> message = MessageBuilder
                 .withPayload(data)
                 .setHeader(KafkaHeaders.TOPIC, "HW_TRAPS")
                 .build();
 
+        System.out.println("HW TRAP PRODUCED!!");
         kafkaTemplate.send(message);
     }
 }

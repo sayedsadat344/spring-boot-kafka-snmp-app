@@ -1,10 +1,9 @@
 package com.traps.RoshanNOCTraps.db;
 
+import com.mycompany.app.sharedClasses.HwTrapBody;
+import com.mycompany.app.sharedClasses.ZteTrapBody;
 import com.traps.RoshanNOCTraps.kafka.producer.HwTrapProducer;
 import com.traps.RoshanNOCTraps.kafka.producer.ZteTrapProducer;
-import com.traps.RoshanNOCTraps.traps.hw.HwTrapBody;
-import com.traps.RoshanNOCTraps.traps.zte.ZteTrapBody;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
