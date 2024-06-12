@@ -80,11 +80,14 @@ public class ProcessHwPdu {
 
         //1 = cleared
         //2 arrival
-//        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"   =====> Is Clear Or Not:  "+clearOrNot);
+        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
 
-        if (hwTrapBody.getAlarmClearedTime() == null || hwTrapBody.getAlarmClearedTime().isBlank() || hwTrapBody.getAlarmClearedTime().isEmpty()) {
+        System.out.println("alarm_arrival_time: "+pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
+
+//        if (hwTrapBody.getAlarmClearedTime() == null || hwTrapBody.getAlarmClearedTime().isBlank() || hwTrapBody.getAlarmClearedTime().isEmpty()) {
             //site identification section
 
+        if (Long.parseLong(clearOrNot) == 2) {
             hwTrapBody.setNewOrClear(1L);
             hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
