@@ -16,6 +16,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -45,7 +49,7 @@ public class ProcessHwPdu {
     );
 
 
-
+    private static final String FILE_PATH = "hw-output.txt";
 
     public void processPdu(CommandResponderEvent crEvent) throws SQLException {
 
@@ -132,6 +136,17 @@ public class ProcessHwPdu {
 //            System.out.println("HW trap UPDATE: "+hwTrapBody);
 //            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("update",pdu);
+        }
+
+        appendData(hwTrapBody);
+    }
+
+    private void appendData(HwTrapBody hwTrapBody) {
+        try {
+            Files.write(Paths.get(FILE_PATH), (hwTrapBody.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            System.out.println("Object written to file successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

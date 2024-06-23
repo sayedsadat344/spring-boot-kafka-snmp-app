@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps.traps.zte;
 
+import com.mycompany.app.sharedClasses.HwTrapBody;
 import com.mycompany.app.sharedClasses.ZteTrapBody;
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
@@ -14,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +38,7 @@ public class ProcessZtePdu {
             198083023L, 199083023L, 198092562L, 198094422L, 198092559L
     );
 
-
+    private static final String FILE_PATH = "zte-output.txt";
 
     public void processPdu(CommandResponderEvent crEvent) throws SQLException {
 
@@ -110,8 +115,17 @@ public class ProcessZtePdu {
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }
+        appendData(zteTrapBody);
     }
 
+    private void appendData(ZteTrapBody zte) {
+        try {
+            Files.write(Paths.get(FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            System.out.println("Object written to file successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private ZteTrapBody extractSiteInfoZTE(ZteTrapBody zteTrapBody, String objectInstanceName_zte, String localRNCId) {
 
