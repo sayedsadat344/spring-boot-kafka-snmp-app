@@ -138,7 +138,7 @@ public class ProcessHwPdu {
 //            this.saveOrUpdateDatabaseHW("update",pdu);
         }
 
-        appendData(hwTrapBody);
+//        appendData(hwTrapBody);
     }
 
     private void appendData(HwTrapBody hwTrapBody) {

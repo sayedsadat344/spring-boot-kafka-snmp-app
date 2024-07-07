@@ -115,7 +115,7 @@ public class ProcessZtePdu {
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }
-        appendData(zteTrapBody);
+//        appendData(zteTrapBody);
     }
 
     private void appendData(ZteTrapBody zte) {
