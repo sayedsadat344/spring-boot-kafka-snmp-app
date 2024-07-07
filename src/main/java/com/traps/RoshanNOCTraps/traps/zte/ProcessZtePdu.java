@@ -57,59 +57,77 @@ public class ProcessZtePdu {
 
     private void filterZteTrap(PDU pdu) throws SQLException {
 
+        System.out.println("here I am: ");
+//        System.out.println("Alarm id: "+pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.1")).toString());
+        System.out.println("Row Status: "+pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.13")));
+        System.out.println("Alarm New: "+pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.4.1.1")));
+        System.out.println("Alarm Clear: "+pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.4.1.2")));
+//
+//
+        System.out.println("clearAlarm: "+pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.7.4")));
+
         ZteTrapBody zteTrapBody = new ZteTrapBody();
         zteTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.24")).toString());
         zteTrapBody.setAlarmCode(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString());
         String eventTime = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.3")).toString();
         String alarmNewOrClear = pdu.getVariable(new OID("1.3.6.1.6.3.1.1.4.1.0")).toString();
 
+        zteTrapBody.setAlarmArrivalTime(eventTime);
+        zteTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.14")).toString());
+        zteTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.26")).toString());
+
+        String localRNCId = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.15")).toString();
+        String objectInstanceName_zte = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.8")).toString();
+        //extract site info
+        zteTrapBody = extractSiteInfoZTE(zteTrapBody,objectInstanceName_zte,localRNCId);
+
+        //setup site id
+        zteTrapBody.setSiteId(setUpSiteId(zteTrapBody.getSiteId()));
+
+        //setup service type
+        zteTrapBody.setAlarmServiceType(setUpServiceType(zteTrapBody.getSiteId(),zteTrapBody.getAlarmCode()));
+
+        //setup display site id
+        zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(zteTrapBody.getSiteId(),zteTrapBody.getAlarmServiceType()));
+
+        //other details
+        zteTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.4")).toLong());
+
+        zteTrapBody.setId(DbOperation.generateUniqueId());
+        zteTrapBody.setAlarmClearedTime(eventTime);
+
+
         if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.1")) {
-            zteTrapBody.setAlarmArrivalTime(eventTime);
-            zteTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.14")).toString());
-            zteTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.26")).toString());
 
-            String localRNCId = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.15")).toString();
-            String objectInstanceName_zte = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.8")).toString();
-            //extract site info
-            zteTrapBody = extractSiteInfoZTE(zteTrapBody,objectInstanceName_zte,localRNCId);
 
-            //setup site id
-            zteTrapBody.setSiteId(setUpSiteId(zteTrapBody.getSiteId()));
-
-            //setup service type
-            zteTrapBody.setAlarmServiceType(setUpServiceType(zteTrapBody.getSiteId(),zteTrapBody.getAlarmCode()));
-
-            //setup display site id
-            zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(zteTrapBody.getSiteId(),zteTrapBody.getAlarmServiceType()));
-
-            //other details
-            zteTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.4")).toLong());
-
+            System.out.println("NEW: "+pdu);
 
 //            System.out.println("ZTE trap INSERT: "+zteTrapBody);
             zteTrapBody.setNewOrClear(1L);
 
-            zteTrapBody.setId(DbOperation.generateUniqueId());
+
 //            kafka send
-            KafkaOperation.sendZteTrap(zteTrapBody);
+//            KafkaOperation.sendZteTrap(zteTrapBody);
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("insert",pdu);
 //            DbOperation.addZteTrap(zteTrapBody);
 
         }
         else if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.2")) {
-            zteTrapBody.setAlarmClearedTime(eventTime);
 
+            System.out.println("Clear: "+pdu);
 //            System.out.println("ZTE trap UPDATE: "+zteTrapBody);
 
             zteTrapBody.setNewOrClear(2L);
 
-            KafkaOperation.sendZteTrap(zteTrapBody);
+//            KafkaOperation.sendZteTrap(zteTrapBody);
 
 //            DbOperation.updateZteTrap(zteTrapBody.getTrapId(),zteTrapBody);
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }
+
+//        System.out.println("ZTE: \n"+ zteTrapBody);
     }
 
 

@@ -78,61 +78,60 @@ public class ProcessHwPdu {
 
         String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
 
-        //1 = cleared
-        //2 arrival
-        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
+        hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
-        System.out.println("alarm_arrival_time: "+pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
+        String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
+        //event time section
+        hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
+
+        //alarm identification
+        hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
+        hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
+        hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
+        hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
+
+        hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
+
+        //set up site info
+        hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
+
+        //setup site id
+        hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+
+        //setup service type
+        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
+
+        //setup display site id
+        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
+
 
 //        if (hwTrapBody.getAlarmClearedTime() == null || hwTrapBody.getAlarmClearedTime().isBlank() || hwTrapBody.getAlarmClearedTime().isEmpty()) {
             //site identification section
 
         if (Long.parseLong(clearOrNot) == 2) {
             hwTrapBody.setNewOrClear(1L);
-            hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
-            String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
-            //event time section
-            hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
-
-            //alarm identification
-            hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
-            hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
-           hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
-           hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
-
-            hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
-
-            //set up site info
-            hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
-
-            //setup site id
-            hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
-
-            //setup service type
-            hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
-
-            //setup display site id
-            hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
 
 //            System.out.println("HW trap INSERT: ");
 
 
 //            produce to kafka
-            KafkaOperation.sendHwTrap(hwTrapBody);
+//            KafkaOperation.sendHwTrap(hwTrapBody);
 //            DbOperation.addHwTrap(hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("insert",pdu);
         }else{
 
             hwTrapBody.setNewOrClear(2L);
-            hwTrapBody.setId(DbOperation.generateUniqueId());
-//            produce to kafka
-            KafkaOperation.sendHwTrap(hwTrapBody);
+//            hwTrapBody.setId(DbOperation.generateUniqueId());
+////            produce to kafka
+//            KafkaOperation.sendHwTrap(hwTrapBody);
 
 //            System.out.println("HW trap UPDATE: "+hwTrapBody);
 //            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("update",pdu);
         }
+
+//        System.out.println("HW: \n"+hwTrapBody);
     }
 
 
