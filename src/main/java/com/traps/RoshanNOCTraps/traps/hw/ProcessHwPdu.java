@@ -78,50 +78,36 @@ public class ProcessHwPdu {
         HwTrapBody hwTrapBody = new HwTrapBody();
         hwTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.1.0")).toString());
         hwTrapBody.setAlarmClearedTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.15.0")).toString());
-
-
         String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
 
-        //1 = cleared
-        //2 arrival
-        System.out.println("alarm_clear_time_hw: "+hwTrapBody.getAlarmClearedTime() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
+        hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
-        System.out.println("alarm_arrival_time: "+pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString() +"  &&&   =====> Is Clear Or Not:  "+clearOrNot);
+        String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
+        //event time section
+        hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
 
-//        if (hwTrapBody.getAlarmClearedTime() == null || hwTrapBody.getAlarmClearedTime().isBlank() || hwTrapBody.getAlarmClearedTime().isEmpty()) {
-            //site identification section
+        //alarm identification
+        hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
+        hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
+        hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
+        hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
+
+        hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
+
+        //set up site info
+        hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
+
+        //setup site id
+        hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+
+        //setup service type
+        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
+
+        //setup display site id
+        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
 
         if (Long.parseLong(clearOrNot) == 2) {
             hwTrapBody.setNewOrClear(1L);
-            hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
-
-            String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
-            //event time section
-            hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
-
-            //alarm identification
-            hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
-            hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
-           hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
-           hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
-
-            hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
-
-            //set up site info
-            hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
-
-            //setup site id
-            hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
-
-            //setup service type
-            hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
-
-            //setup display site id
-            hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
-
-//            System.out.println("HW trap INSERT: ");
-
-
 //            produce to kafka
             KafkaOperation.sendHwTrap(hwTrapBody);
 //            DbOperation.addHwTrap(hwTrapBody);
@@ -129,7 +115,7 @@ public class ProcessHwPdu {
         }else{
 
             hwTrapBody.setNewOrClear(2L);
-            hwTrapBody.setId(DbOperation.generateUniqueId());
+//            hwTrapBody.setId(DbOperation.generateUniqueId());
 //            produce to kafka
             KafkaOperation.sendHwTrap(hwTrapBody);
 
@@ -242,28 +228,27 @@ public class ProcessHwPdu {
 
     public String setUpServiceType(String siteId, String alarmCodeString) {
 
+
+
         String localServiceType;
+
+        // Assume alarmCodeString is already defined as a String containing the alarm code
         Long alarmCode = Long.parseLong(alarmCodeString);
-
-        List<String> alarmCodes3G = Arrays.asList(
-                "22202", "65067", "65080", "198083022", "199083022",
-                "65068", "65381", "198083023", "199083023", "200083022", "200083023"
-        );
-
-        List<String> alarmCodes4G = Arrays.asList(
-                "65081", "29201", "198094419", "198094461",
-                "65084", "198092295", "198094422"
-        );
 
         if(alarmCode == 22214L){
             localServiceType = "3G";
         }
-        else if (alarmCodes3G.contains(alarmCode)) {
+
+        // Check conditions
+        // Check if alarmCode matches any of the predefined values
+        if (alarmCode == 22214 || alarmCode == 22202 || alarmCode == 65081 ||
+                alarmCode == 65080 || alarmCode == 65070 || alarmCode == 65069 ||
+                alarmCode == 65068 || alarmCode == 65067 || alarmCode == 25622 ||
+                alarmCode == 25621) {
             localServiceType = "3G";
-        } else if (alarmCodes4G.contains(alarmCode)) {
+        } else if (alarmCode == 29201 || alarmCode == 21825 || alarmCode == 18606) {
             localServiceType = "4G";
-        }
-        else if(alarmCode == 65069L){
+        } else if(alarmCode == 65069L){
 
             if(siteId.endsWith("_UL")){
                 localServiceType = "4G";
@@ -271,9 +256,44 @@ public class ProcessHwPdu {
                 localServiceType = "3G";
             }
         }
-        else{
+        else {
+            // Handle other cases if needed
             localServiceType = "2G";
         }
+
+
+//        String localServiceType;
+//        Long alarmCode = Long.parseLong(alarmCodeString);
+//
+//        List<String> alarmCodes3G = Arrays.asList(
+//                "22202", "65067", "65080", "198083022", "199083022",
+//                "65068", "65381", "198083023", "199083023", "200083022", "200083023"
+//        );
+//
+//        List<String> alarmCodes4G = Arrays.asList(
+//                "65081", "29201", "198094419", "198094461",
+//                "65084", "198092295", "198094422"
+//        );
+//
+//        if(alarmCode == 22214L){
+//            localServiceType = "3G";
+//        }
+//        else if (alarmCodes3G.contains(alarmCode)) {
+//            localServiceType = "3G";
+//        } else if (alarmCodes4G.contains(alarmCode)) {
+//            localServiceType = "4G";
+//        }
+//        else if(alarmCode == 65069L){
+//
+//            if(siteId.endsWith("_UL")){
+//                localServiceType = "4G";
+//            }else{
+//                localServiceType = "3G";
+//            }
+//        }
+//        else{
+//            localServiceType = "2G";
+//        }
 
         return localServiceType;
 

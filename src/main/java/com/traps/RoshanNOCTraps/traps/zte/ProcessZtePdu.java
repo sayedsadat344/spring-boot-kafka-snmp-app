@@ -219,37 +219,48 @@ public class ProcessZtePdu {
     public String setUpServiceType(String siteId, String alarmCodeString) {
 
         String localServiceType;
+
+        // Assume alarmCodeString is already defined as a String containing the alarm code
         Long alarmCode = Long.parseLong(alarmCodeString);
 
-        List<String> alarmCodes3G = Arrays.asList(
-                "22202", "65067", "65080", "198083022", "199083022",
-                "65068", "65381", "198083023", "199083023", "200083022", "200083023"
-        );
 
-        List<String> alarmCodes4G = Arrays.asList(
-                "65081", "29201", "198094419", "198094461",
-                "65084", "198092295", "198094422"
-        );
-
-        if(alarmCode == 22214L){
+       // Check conditions
+        if (alarmCode == 200083023 || alarmCode == 200083022 || alarmCode == 199083023 || alarmCode == 199083022 || alarmCode == 198083023 || alarmCode == 198083022) {
             localServiceType = "3G";
-        }
-        else if (alarmCodes3G.contains(alarmCode)) {
-            localServiceType = "3G";
-        } else if (alarmCodes4G.contains(alarmCode)) {
+        } else if (alarmCode == 198094422 || alarmCode == 198094420 || alarmCode == 198094419) {
             localServiceType = "4G";
         }
-        else if(alarmCode == 65069L){
-
-            if(siteId.endsWith("_UL")){
-                localServiceType = "4G";
-            }else{
-                localServiceType = "3G";
-            }
-        }
-        else{
+        else {
+            // Handle other cases if needed
             localServiceType = "2G";
         }
+
+
+
+
+
+
+
+
+//        if(alarmCode == 22214L){
+//            localServiceType = "3G";
+//        }
+//        else if (alarmCodes3G.contains(alarmCode)) {
+//            localServiceType = "3G";
+//        } else if (alarmCodes4G.contains(alarmCode)) {
+//            localServiceType = "4G";
+//        }
+//        else if(alarmCode == 65069L){
+//
+//            if(siteId.endsWith("_UL")){
+//                localServiceType = "4G";
+//            }else{
+//                localServiceType = "3G";
+//            }
+//        }
+//        else{
+//            localServiceType = "2G";
+//        }
 
         return localServiceType;
 
