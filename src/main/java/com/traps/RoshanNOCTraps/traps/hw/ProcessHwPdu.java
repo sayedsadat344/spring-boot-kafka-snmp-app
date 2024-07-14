@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class ProcessHwPdu {
@@ -36,12 +34,12 @@ public class ProcessHwPdu {
 
     // Inside your method
 // Inside your method
-    List<Long> alarmIdList = Arrays.asList(
+    Set<Long> alarmIdList = new HashSet<>(Arrays.asList(
             21807L, 22214L, 65080L, 65070L, 65501L,
             65033L, 65381L, 29201L, 25622L, 65084L,
             65067L, 5700L, 65081L, 25621L, 65068L,
             65502L, 65059L, 65071L, 21825L, 65069L
-    );
+    ));
 
 
 

@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProcessZtePdu {
 
@@ -27,10 +29,10 @@ public class ProcessZtePdu {
 //    }
 
 
-    private List<Long> alarmValues = Arrays.asList(
+    private static final Set<Long> alarmValues = new HashSet<>(Arrays.asList(
             199087337L, 198092550L, 198087337L, 198092295L,
             198083023L, 199083023L, 198092562L, 198094422L, 198092559L
-    );
+    ));
 
 
 
