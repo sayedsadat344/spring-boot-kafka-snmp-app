@@ -222,28 +222,27 @@ public class ProcessHwPdu {
 
     public String setUpServiceType(String siteId, String alarmCodeString) {
 
+//
+
         String localServiceType;
+
+        // Assume alarmCodeString is already defined as a String containing the alarm code
         Long alarmCode = Long.parseLong(alarmCodeString);
-
-        List<String> alarmCodes3G = Arrays.asList(
-                "22202", "65067", "65080", "198083022", "199083022",
-                "65068", "65381", "198083023", "199083023", "200083022", "200083023"
-        );
-
-        List<String> alarmCodes4G = Arrays.asList(
-                "65081", "29201", "198094419", "198094461",
-                "65084", "198092295", "198094422"
-        );
 
         if(alarmCode == 22214L){
             localServiceType = "3G";
         }
-        else if (alarmCodes3G.contains(alarmCode)) {
+
+        // Check conditions
+        // Check if alarmCode matches any of the predefined values
+        if (alarmCode == 22214 || alarmCode == 22202 || alarmCode == 65081 ||
+                alarmCode == 65080 || alarmCode == 65070 || alarmCode == 65069 ||
+                alarmCode == 65068 || alarmCode == 65067 || alarmCode == 25622 ||
+                alarmCode == 25621) {
             localServiceType = "3G";
-        } else if (alarmCodes4G.contains(alarmCode)) {
+        } else if (alarmCode == 29201 || alarmCode == 21825 || alarmCode == 18606 || alarmCode == 16653) {
             localServiceType = "4G";
-        }
-        else if(alarmCode == 65069L){
+        } else if(alarmCode == 65069L){
 
             if(siteId.endsWith("_UL")){
                 localServiceType = "4G";
@@ -251,12 +250,12 @@ public class ProcessHwPdu {
                 localServiceType = "3G";
             }
         }
-        else{
+        else {
+            // Handle other cases if needed
             localServiceType = "2G";
         }
 
         return localServiceType;
-
     }
 
     public String setUpDisplaySiteId(String tempSiteId, String temServiceType) {
