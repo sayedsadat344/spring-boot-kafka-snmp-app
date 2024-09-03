@@ -45,7 +45,7 @@ public class ProcessHwPdu {
             21807L, 22214L, 65080L, 65070L, 65501L,
             65033L, 65381L, 29201L, 25622L, 65084L,
             65067L, 5700L, 65081L, 25621L, 65068L,
-            65502L, 65059L, 65071L, 21825L, 65069L
+            65502L, 65059L, 65071L, 21825L, 65069L,65090L
     );
 
 
@@ -61,12 +61,14 @@ public class ProcessHwPdu {
 
     private void processHwPDU(PDU pdu) throws SQLException {
 
-
         if (pdu.getType() == PDU.TRAP) {
             String intendedAlarmHwString = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.9.0")).toString();
             Long intendedAlarmHuawei = Long.parseLong(intendedAlarmHwString);
 
             if (alarmIdList.contains(intendedAlarmHuawei)) {
+
+
+
                 filterHuaweiTrap(pdu, intendedAlarmHuawei);
             }
         }
@@ -110,6 +112,7 @@ public class ProcessHwPdu {
             hwTrapBody.setNewOrClear(1L);
 //            produce to kafka
             KafkaOperation.sendHwTrap(hwTrapBody);
+            //        appendData(hwTrapBody);
 //            DbOperation.addHwTrap(hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("insert",pdu);
         }else{
@@ -124,12 +127,22 @@ public class ProcessHwPdu {
 //            this.saveOrUpdateDatabaseHW("update",pdu);
         }
 
-//        appendData(hwTrapBody);
+        System.out.println("HW: "+hwTrapBody);
+
     }
 
     private void appendData(HwTrapBody hwTrapBody) {
         try {
             Files.write(Paths.get(FILE_PATH), (hwTrapBody.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            System.out.println("Object written to file successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendData(PDU pdu) {
+        try {
+            Files.write(Paths.get(FILE_PATH), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             System.out.println("Object written to file successfully.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +171,7 @@ public class ProcessHwPdu {
             String version_2_from_field_4 = siteName.substring(siteName.indexOf("-")+1,siteName.indexOf("_")).trim();
             String version_3_from_field_4 = siteName.substring(0, siteName.indexOf("_UL_") + 3).trim();
 
-            if(alarmCodeHW.equals("25621") || alarmCodeHW.equals("29201") || alarmCodeHW.equals("65059")){
+            if(alarmCodeHW.equals("25621") || alarmCodeHW.equals("29201") || alarmCodeHW.equals("65059") || alarmCodeHW.equals("65090")){
 
                 if(siteName.indexOf("_UL_") != -1){
                     siteId = version_3_from_field_4;
@@ -246,7 +259,7 @@ public class ProcessHwPdu {
                 alarmCode == 65068 || alarmCode == 65067 || alarmCode == 25622 ||
                 alarmCode == 25621) {
             localServiceType = "3G";
-        } else if (alarmCode == 29201 || alarmCode == 21825 || alarmCode == 18606) {
+        } else if (alarmCode == 29201 || alarmCode == 21825 || alarmCode == 18606 || alarmCode == 65090) {
             localServiceType = "4G";
         } else if(alarmCode == 65069L){
 

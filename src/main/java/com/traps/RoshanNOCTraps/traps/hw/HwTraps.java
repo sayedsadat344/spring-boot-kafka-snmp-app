@@ -53,13 +53,20 @@ public class HwTraps extends TrapsConfig implements CommandResponder {
         threadPool = ThreadPool.create("Trap", 10);
         dispatcher = new MultiThreadedMessageDispatcher(threadPool,
                 new MessageDispatcherImpl());
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
 
 
-//        //TRANSPORT
+//        //TRANSPORT old server
 //        listenAddress = GenericAddress.parse(System.getProperty(
 //                "snmp4j.listenAddress", "udp:10.150.150.35/21171"));
+
+        //        TRANSPORT new server
+
+                listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.225/21171"));
+
+
 
         TransportMapping<?> transport;
         if (listenAddress instanceof UdpAddress) {
@@ -103,7 +110,6 @@ public class HwTraps extends TrapsConfig implements CommandResponder {
     @Override
     public void processPdu(CommandResponderEvent crEvent) {
         try {
-//            processHwPdu.processPdu(crEvent);
             new ProcessHwPdu().processPdu(crEvent);
         } catch (SQLException e) {
             throw new RuntimeException(e);

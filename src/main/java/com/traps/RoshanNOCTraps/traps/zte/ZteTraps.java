@@ -43,21 +43,24 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
 
     private void init() throws UnknownHostException, IOException {
 
-
         threadPool = ThreadPool.create("Trap", 10);
         dispatcher = new MultiThreadedMessageDispatcher(threadPool,
                 new MessageDispatcherImpl());
 
         //TRANSPORT
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
 
 
-//
+//  old server
 //           listenAddress = GenericAddress.parse(System.getProperty(
 //             "snmp4j.listenAddress", "udp:10.150.150.35/162"));
 
 
+        //        TRANSPORT new server
+
+        listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
 
         TransportMapping<?> transport;
         if (listenAddress instanceof UdpAddress) {
@@ -104,7 +107,6 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
     public void processPdu(CommandResponderEvent crEvent) {
         try {
 
-//            processZtePdu.processPdu(crEvent);
             new ProcessZtePdu().processPdu(crEvent);
         } catch (SQLException e) {
             throw new RuntimeException(e);

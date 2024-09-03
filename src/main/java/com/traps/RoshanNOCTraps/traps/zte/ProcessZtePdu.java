@@ -35,8 +35,10 @@ public class ProcessZtePdu {
 
     private List<Long> alarmValues = Arrays.asList(
             199087337L, 198092550L, 198087337L, 198092295L,
-            198083023L, 199083023L, 198092562L, 198094422L, 198092559L
+            198083023L, 199083023L, 198092562L, 198094422L, 198092559L,198099803L
     );
+
+
 
     private static final String FILE_PATH = "zte-output.txt";
 
@@ -49,7 +51,6 @@ public class ProcessZtePdu {
 
 
     private void processZTEPDU(PDU pdu) throws SQLException {
-
 
         if (pdu.getType() == PDU.TRAP) {
             String intendedAlarmZteString = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString();
@@ -105,16 +106,19 @@ public class ProcessZtePdu {
         else if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.2")) {
             zteTrapBody.setAlarmClearedTime(eventTime);
 
-//            System.out.println("ZTE trap UPDATE: "+zteTrapBody);
-
             zteTrapBody.setNewOrClear(2L);
 
             KafkaOperation.sendZteTrap(zteTrapBody);
+
+
 
 //            DbOperation.updateZteTrap(zteTrapBody.getTrapId(),zteTrapBody);
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }
+
+        System.out.println("ZTE: "+zteTrapBody);
+
 //        appendData(zteTrapBody);
     }
 
@@ -227,7 +231,7 @@ public class ProcessZtePdu {
        // Check conditions
         if (alarmCode == 200083023 || alarmCode == 200083022 || alarmCode == 199083023 || alarmCode == 199083022 || alarmCode == 198083023 || alarmCode == 198083022) {
             localServiceType = "3G";
-        } else if (alarmCode == 198094422 || alarmCode == 198094420 || alarmCode == 198094419) {
+        } else if (alarmCode == 198094422 || alarmCode == 198094420 || alarmCode == 198094419 || alarmCode == 198099803) {
             localServiceType = "4G";
         }
         else {

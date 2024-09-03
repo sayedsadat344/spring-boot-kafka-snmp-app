@@ -13,28 +13,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class RoshanNocTrapsManagementApplication {
 
 
-//	private static HwTraps hwTraps;
-//	private static ZteTraps zteTraps;
-//
-//	@Autowired
-//	public RoshanNocTrapsManagementApplication(HwTraps hwTraps,ZteTraps zteTraps) {
-//		this.hwTraps = hwTraps;
-//		this.zteTraps = zteTraps;
-//	}
-
 	public static void main(String[] args) {
 
 		SpringApplication.run(RoshanNocTrapsManagementApplication.class, args);
 		new ZteTraps().run();
-
-//		zteTraps.run();
-
 		new HwTraps().run();
-//		hwTraps.run();
 
-
-
-//		new HuaweiTraps().run();
 
 	}
 
