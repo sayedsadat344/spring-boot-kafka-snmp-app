@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps;
 
+import com.mycompany.app.sharedClasses.HwTrapBody;
 import com.traps.RoshanNOCTraps.db.ZteDaoImpl;
 import com.traps.RoshanNOCTraps.traps.hw.HwTraps;
 import com.traps.RoshanNOCTraps.traps.hw.ProcessHwPdu;
@@ -14,6 +15,8 @@ public class RoshanNocTrapsManagementApplication {
 
 
 	public static void main(String[] args) {
+
+
 
 		SpringApplication.run(RoshanNocTrapsManagementApplication.class, args);
 		new ZteTraps().run();

@@ -66,9 +66,6 @@ public class ProcessHwPdu {
             Long intendedAlarmHuawei = Long.parseLong(intendedAlarmHwString);
 
             if (alarmIdList.contains(intendedAlarmHuawei)) {
-
-
-
                 filterHuaweiTrap(pdu, intendedAlarmHuawei);
             }
         }
@@ -80,6 +77,7 @@ public class ProcessHwPdu {
         HwTrapBody hwTrapBody = new HwTrapBody();
         hwTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.1.0")).toString());
         hwTrapBody.setAlarmClearedTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.15.0")).toString());
+
         String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
 
         hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
@@ -96,8 +94,11 @@ public class ProcessHwPdu {
 
         hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
 
+
         //set up site info
         hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
+
+
 
         //setup site id
         hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
@@ -127,7 +128,12 @@ public class ProcessHwPdu {
 //            this.saveOrUpdateDatabaseHW("update",pdu);
         }
 
-        System.out.println("HW: "+hwTrapBody);
+
+
+//        appendData(hwTrapBody);
+//            System.out.println("SITEWISE: "+hwTrapBody);
+
+
 
     }
 
