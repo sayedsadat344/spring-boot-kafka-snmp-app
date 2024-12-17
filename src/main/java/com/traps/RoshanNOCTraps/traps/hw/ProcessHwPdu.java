@@ -45,7 +45,7 @@ public class ProcessHwPdu {
             21807L, 22214L, 65080L, 65070L, 65501L,
             65033L, 65381L, 29201L, 25622L, 65084L,
             65067L, 5700L, 65081L, 25621L, 65068L,
-            65502L, 65059L, 65071L, 21825L, 65069L,65090L
+            65502L, 65059L, 65071L, 21825L, 65069L,65090L,65334L
     );
 
 
@@ -66,7 +66,10 @@ public class ProcessHwPdu {
             Long intendedAlarmHuawei = Long.parseLong(intendedAlarmHwString);
 
             if (alarmIdList.contains(intendedAlarmHuawei)) {
-                filterHuaweiTrap(pdu, intendedAlarmHuawei);
+
+//                    System.out.println("PDU: "+pdu);
+                    filterHuaweiTrap(pdu, intendedAlarmHuawei);
+
             }
         }
     }
@@ -131,7 +134,9 @@ public class ProcessHwPdu {
 
 
 //        appendData(hwTrapBody);
-//            System.out.println("SITEWISE: "+hwTrapBody);
+            System.out.println("\nSITEWISE: "+hwTrapBody);
+
+        System.out.println("************************************************");
 
 
 
@@ -140,7 +145,7 @@ public class ProcessHwPdu {
     private void appendData(HwTrapBody hwTrapBody) {
         try {
             Files.write(Paths.get(FILE_PATH), (hwTrapBody.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            System.out.println("Object written to file successfully.");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -149,100 +154,180 @@ public class ProcessHwPdu {
     private void appendData(PDU pdu) {
         try {
             Files.write(Paths.get(FILE_PATH), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            System.out.println("Object written to file successfully.");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-    private HwTrapBody extractSiteInfoHW(String info,HwTrapBody hwTrapBody) {
 
+    private HwTrapBody extractSiteInfoHW(String info, HwTrapBody hwTrapBody) {
         String siteId = null;
         String siteName = hwTrapBody.getSiteName().trim();
         String alarmCodeHW = hwTrapBody.getAlarmCode();
 
-//        same condition 21801
-        if(alarmCodeHW.equals("22214")){
+        // Handle alarm code "22214"
+        if (alarmCodeHW.equals("22214")) {
+            siteName = extractSiteNameFromInfo(info, 4);
+            siteId = extractSiteIdFromSiteName(siteName);
+        } else {
+            String untilUnderScoreOnly = siteName.substring(0, siteName.indexOf("_")).trim();
+            String fromDashUntilUnderscore = siteName.substring(siteName.indexOf("-") + 1, siteName.indexOf("_")).trim();
+            String ifHas_UL_From0Until_UL_ = siteName.contains("_UL_") ? siteName.substring(0, siteName.indexOf("_UL_") + 3).trim() : null;
 
-            String arr[] = info.split(",");
-            String term = arr[4].trim();
-            siteName = term.substring(term.indexOf("=")+1);
-            siteId = siteName.substring(0,siteName.indexOf("_")).trim();
+            switch (alarmCodeHW) {
+                case "25621":
+                case "29201":
+                case "65059":
+                case "65090":
+                case "65084":
+                case "65069":
+                case "65081":
+                case "65068":
+                case "65080":
+                    siteId = resolveSiteId(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_);
+                    break;
 
-        }
-        else
-        {
-            String version_1_from_field_4 = siteName.substring(0, siteName.indexOf("_")).trim();
-            String version_2_from_field_4 = siteName.substring(siteName.indexOf("-")+1,siteName.indexOf("_")).trim();
-            String version_3_from_field_4 = siteName.substring(0, siteName.indexOf("_UL_") + 3).trim();
+                case "65033":
+                case "65501":
+                case "21807":
+                case "65070":
+                case "5700":
+                case "65071":
+                    siteId = fromDashUntilUnderscore;
+                    break;
 
-            if(alarmCodeHW.equals("25621") || alarmCodeHW.equals("29201") || alarmCodeHW.equals("65059") || alarmCodeHW.equals("65090")){
+                case "25622":
+                case "65067":
+                case "21825":
+                case "65502":
+                    siteId = siteName.contains("-") ? fromDashUntilUnderscore : untilUnderScoreOnly;
+                    break;
 
-                if(siteName.indexOf("_UL_") != -1){
-                    siteId = version_3_from_field_4;
-                }else if(siteName.indexOf("-") != -1){
-                    siteId = version_2_from_field_4;
-                }else{
-                    siteId = version_1_from_field_4;
-                }
-            }
-            else if(alarmCodeHW.equals("65084") || alarmCodeHW.equals("65069") || alarmCodeHW.equals("65081")  || alarmCodeHW.equals("65068") || alarmCodeHW.equals("65080")){
-
-                if(siteName.indexOf("_UL_") != -1){
-                    siteId = version_3_from_field_4;
-                }else{
-                    if(siteName.indexOf("-") != -1){
-                        siteId = version_2_from_field_4;
-                    }else{
-                        siteId = version_1_from_field_4;
+                default:
+                    if (siteId == null || siteId.isEmpty()) {
+                        siteId = "RANDOM";
                     }
-
-                }
-
-            }
-            else{
-                if(alarmCodeHW.equals("65033")  || alarmCodeHW.equals("65501") || alarmCodeHW.equals("21807")||
-                        alarmCodeHW.equals("65070") || alarmCodeHW.equals("5700")  ||  alarmCodeHW.equals("65071") ){
-                    siteId = version_2_from_field_4;
-                    siteName = siteName;
-                }
-                else if( alarmCodeHW.equals("25622")){
-//                    same condition alarmCodeHW.equals("22202") ||
-                    String arr[] = info.split(",");
-                    String term = arr[7].trim();
-                    siteName = term.substring(term.indexOf("=")+1);
-                    siteId = siteName.substring(0,siteName.indexOf("_")).trim();
-
-                }
-                else if(alarmCodeHW.equals("65067")   || alarmCodeHW.equals("21825") || alarmCodeHW.equals("65502")){
-
-                    if(siteName.indexOf("-") != -1){
-                        siteId = version_2_from_field_4;
-                    }else{
-                        siteId = version_1_from_field_4;
-                    }
-                }
-                else if(siteId == null || siteId.isEmpty()){
-                    siteId = "RANDOM";
-                }
-
+                    break;
             }
         }
 
         hwTrapBody.setSiteId(siteId);
         hwTrapBody.setSiteName(siteName);
-
         return hwTrapBody;
-
-//        alarmServiceTypeHW = pduProccessConfig.setUpServiceType(site_id_hw,alarmCodeHW,"HW");
-//
-//        site_id_hw = pduProccessConfig.setUpSiteId(site_id_hw,alarmCodeHW,"HW");
-//
-//        displaySiteIdHW = pduProccessConfig.setupDisplaySiteId(site_id_hw,alarmServiceTypeHW,"HW");
-
-
     }
+
+    // Helper method to extract site name from info
+    private String extractSiteNameFromInfo(String info, int index) {
+        String[] arr = info.split(",");
+        String term = arr[index].trim();
+        return term.substring(term.indexOf("=") + 1);
+    }
+
+    // Helper method to extract site ID from site name
+    private String extractSiteIdFromSiteName(String siteName) {
+        return siteName.substring(0, siteName.indexOf("_")).trim();
+    }
+
+    // Helper method to resolve site ID based on versions
+    private String resolveSiteId(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
+        if (siteName.contains("_UL_")) {
+            return ifHas_UL_From0Until_UL_;
+        } else if (siteName.contains("-")) {
+            return fromDashUntilUnderscore;
+        } else {
+            return untilUnderScoreOnly;
+        }
+    }
+
+
+
+
+
+//    private HwTrapBody extractSiteInfoHW(String info,HwTrapBody hwTrapBody) {
+//
+//        String siteId = null;
+//        String siteName = hwTrapBody.getSiteName().trim();
+//        String alarmCodeHW = hwTrapBody.getAlarmCode();
+//
+////        same condition 21801
+//        if(alarmCodeHW.equals("22214")){
+//
+//            String arr[] = info.split(",");
+//            String term = arr[4].trim();
+//            siteName = term.substring(term.indexOf("=")+1);
+//            siteId = siteName.substring(0,siteName.indexOf("_")).trim();
+//
+//        }
+//        else
+//        {
+//            String version_1_from_field_4 = siteName.substring(0, siteName.indexOf("_")).trim();
+//            String version_2_from_field_4 = siteName.substring(siteName.indexOf("-")+1,siteName.indexOf("_")).trim();
+//            String version_3_from_field_4 = siteName.substring(0, siteName.indexOf("_UL_") + 3).trim();
+//
+//            if(alarmCodeHW.equals("25621") || alarmCodeHW.equals("29201") || alarmCodeHW.equals("65059") || alarmCodeHW.equals("65090")){
+//
+//                if(siteName.indexOf("_UL_") != -1){
+//                    siteId = version_3_from_field_4;
+//                }else if(siteName.indexOf("-") != -1){
+//                    siteId = version_2_from_field_4;
+//                }else{
+//                    siteId = version_1_from_field_4;
+//                }
+//            }
+//            else if(alarmCodeHW.equals("65084") || alarmCodeHW.equals("65069") || alarmCodeHW.equals("65081")  || alarmCodeHW.equals("65068") || alarmCodeHW.equals("65080")){
+//
+//                if(siteName.indexOf("_UL_") != -1){
+//                    siteId = version_3_from_field_4;
+//                }else{
+//                    if(siteName.indexOf("-") != -1){
+//                        siteId = version_2_from_field_4;
+//                    }else{
+//                        siteId = version_1_from_field_4;
+//                    }
+//
+//                }
+//
+//            }
+//            else{
+//                if(alarmCodeHW.equals("65033")  || alarmCodeHW.equals("65501") || alarmCodeHW.equals("21807")||
+//                        alarmCodeHW.equals("65070") || alarmCodeHW.equals("5700")  ||  alarmCodeHW.equals("65071") ){
+//                    siteId = version_2_from_field_4;
+//                    siteName = siteName;
+//                }
+//                else if( alarmCodeHW.equals("25622")){
+////                    same condition alarmCodeHW.equals("22202") ||
+//                    String arr[] = info.split(",");
+//                    String term = arr[7].trim();
+//                    siteName = term.substring(term.indexOf("=")+1);
+//                    siteId = siteName.substring(0,siteName.indexOf("_")).trim();
+//
+//                }
+//                else if(alarmCodeHW.equals("65067")   || alarmCodeHW.equals("21825") || alarmCodeHW.equals("65502")){
+//
+//                    if(siteName.indexOf("-") != -1){
+//                        siteId = version_2_from_field_4;
+//                    }else{
+//                        siteId = version_1_from_field_4;
+//                    }
+//                }
+//                else if(siteId == null || siteId.isEmpty()){
+//                    siteId = "RANDOM";
+//                }
+//
+//            }
+//        }
+//
+//        hwTrapBody.setSiteId(siteId);
+//        hwTrapBody.setSiteName(siteName);
+//
+//        return hwTrapBody;
+//
+//
+//
+//
+//    }
 
 
     public String setUpServiceType(String siteId, String alarmCodeString) {
@@ -263,7 +348,7 @@ public class ProcessHwPdu {
         if (alarmCode == 22214 || alarmCode == 22202 || alarmCode == 65081 ||
                 alarmCode == 65080 || alarmCode == 65070 || alarmCode == 65069 ||
                 alarmCode == 65068 || alarmCode == 65067 || alarmCode == 25622 ||
-                alarmCode == 25621) {
+                alarmCode == 25621 || alarmCode == 65334) {
             localServiceType = "3G";
         } else if (alarmCode == 29201 || alarmCode == 21825 || alarmCode == 18606 || alarmCode == 65090) {
             localServiceType = "4G";

@@ -35,9 +35,15 @@ public class ProcessZtePdu {
 
     private List<Long> alarmValues = Arrays.asList(
             199087337L, 198092550L, 198087337L, 198092295L,
-            198083023L, 199083023L, 198092562L, 198094422L, 198092559L,198099803L
+            198083023L, 199083023L, 198092562L, 198094422L, 198092559L,198099803L,198200011L,198200001L,1014L,198094466L,
+            198200004L
     );
 
+//    private List<Long> alarmValues = Arrays.asList(
+//            199083023L,
+//            198083023L,
+//            200083023L
+//    );
 
 
     private static final String FILE_PATH = "zte-output.txt";
@@ -53,44 +59,65 @@ public class ProcessZtePdu {
     private void processZTEPDU(PDU pdu) throws SQLException {
 
         if (pdu.getType() == PDU.TRAP) {
+
+
+
             String intendedAlarmZteString = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString();
             Long intendedAlarmZte = Long.parseLong(intendedAlarmZteString);
             if (alarmValues.contains(intendedAlarmZte)) {
-                filterZteTrap(pdu);
+
+
+//                appendData(pdu,intendedAlarmZteString+".txt");
+                    filterZteTrap(pdu);
+
+
             }
         }
     }
 
     private void filterZteTrap(PDU pdu) throws SQLException {
 
+//        System.out.println("Trap -1 :");
         ZteTrapBody zteTrapBody = new ZteTrapBody();
+
         zteTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.24")).toString());
         zteTrapBody.setAlarmCode(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString());
+
         String eventTime = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.3")).toString();
         String alarmNewOrClear = pdu.getVariable(new OID("1.3.6.1.6.3.1.1.4.1.0")).toString();
+//        System.out.println("Trap -2 :");
 
         if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.1")) {
+//            System.out.println("Trap -3 :");
+            //new alarm
             zteTrapBody.setAlarmArrivalTime(eventTime);
             zteTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.14")).toString());
             zteTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.26")).toString());
 
             String localRNCId = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.15")).toString();
             String objectInstanceName_zte = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.8")).toString();
+
+//            System.out.println("Trap -4 :");
             //extract site info
             zteTrapBody = extractSiteInfoZTE(zteTrapBody,objectInstanceName_zte,localRNCId);
 
+//            System.out.println("Trap -5 :");
+
             //setup site id
             zteTrapBody.setSiteId(setUpSiteId(zteTrapBody.getSiteId()));
+//            System.out.println("Trap -6 :");
 
             //setup service type
             zteTrapBody.setAlarmServiceType(setUpServiceType(zteTrapBody.getSiteId(),zteTrapBody.getAlarmCode()));
+//            System.out.println("Trap -7 :");
 
             //setup display site id
-            zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(zteTrapBody.getSiteId(),zteTrapBody.getAlarmServiceType()));
+            zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(zteTrapBody.getSiteId(),zteTrapBody.getAlarmServiceType(),zteTrapBody.getAlarmRncId(),zteTrapBody.getAlarmNodeBId()));
+//            System.out.println("Trap -8 :");
 
             //other details
             zteTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.4")).toLong());
-
+//            System.out.println("Trap -9 :");
 
 //            System.out.println("ZTE trap INSERT: "+zteTrapBody);
             zteTrapBody.setNewOrClear(1L);
@@ -98,12 +125,17 @@ public class ProcessZtePdu {
             zteTrapBody.setId(DbOperation.generateUniqueId());
 //            kafka send
             KafkaOperation.sendZteTrap(zteTrapBody);
+
+
+
             ///DATABASE CONNECTIVITY ////
 //            saveOrUpdateDatabaseZTE("insert",pdu);
 //            DbOperation.addZteTrap(zteTrapBody);
 
         }
         else if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.2")) {
+
+            //old alarm
             zteTrapBody.setAlarmClearedTime(eventTime);
 
             zteTrapBody.setNewOrClear(2L);
@@ -117,19 +149,13 @@ public class ProcessZtePdu {
 //            saveOrUpdateDatabaseZTE("update",pdu);
         }
 
-        System.out.println("ZTE: "+zteTrapBody);
-
-//        appendData(zteTrapBody);
+        System.out.println("\nZTE: "+zteTrapBody);
+        System.out.println("*******************************************");
+        appendData(zteTrapBody);
     }
 
-    private void appendData(ZteTrapBody zte) {
-        try {
-            Files.write(Paths.get(FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            System.out.println("Object written to file successfully.");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
+
 
     private ZteTrapBody extractSiteInfoZTE(ZteTrapBody zteTrapBody, String objectInstanceName_zte, String localRNCId) {
 
@@ -139,76 +165,75 @@ public class ProcessZtePdu {
     String siteId = null;
     String siteName = zteTrapBody.getSiteName();
 
-        if(alarmCode.equals("199083023")){
+
+
+        if(alarmCode.equals("199087337") || alarmCode.equals("198087337")){
+
+            String arr[] = localRNCId.split(",");
+
+            siteName = arr[2].trim();
+
+            siteId = siteName.substring(0, 7).trim();
+
+        } else if (alarmCode.equals("199083023") || alarmCode.equals("198083023")) {
+            String extractRncIdFromSiteName = siteName.substring(siteName.indexOf("(") + 1, siteName.length() - 1).trim();
+
             String arr[] = objectInstanceName_zte.split(";");
-            nodeBId = arr[1].trim();
-            nodeBId = nodeBId.substring(nodeBId.indexOf(":")+1).trim();
-            String arr2[] = localRNCId.split(",");
-            rncId = arr2[0].trim();
-            rncId = rncId.substring(rncId.indexOf("(")+1,rncId.length()-1).trim();
 
-            if(rncId.isEmpty()){
-                if(siteName.equals("GDZRZ01(7)")){
-                    rncId = "7";
-                }
-                if(siteName.equals("HRTZR01-RNC01(3)")){
-                    rncId = "3";
-                }
-                if(siteName.equals("KDRZR01-RNC01(4)")){
-                    rncId = "4";
-                }
-            }
-        }
-
-        else if(alarmCode.equals("198083023")){
-
-            String arr3[] = objectInstanceName_zte.split(";");
-            nodeBId = arr3[0];
-            nodeBId = nodeBId.substring(nodeBId.indexOf(":")+1).trim();
-            rncId = siteName.substring(siteName.indexOf("(")+1,siteName.length()-1).trim();
-            if(rncId.isEmpty()){
-                if(siteName.equals("GDZRZ01(7)")){
-                    rncId = "7";
-                }
-                if(siteName.equals("HRTZR01-RNC01(3)")){
-                    rncId = "3";
-                }
-                if(siteName.equals("KDRZR01-RNC01(4)")){
-                    rncId = "4";
-                }
+            if(alarmCode.equals("199083023")){
+                nodeBId = arr[1].trim();
+            }else{
+                nodeBId = arr[0].trim();
             }
 
-        }
+            nodeBId = nodeBId.substring(nodeBId.indexOf(":")+1).trim();
 
+            // Extract RNC ID from Site Name
+            rncId = extractRncIdFromSiteName;
+
+            // If RNC ID is empty, assign a default value based on the site name
+            if (rncId.isEmpty()) {
+                rncId = getRncIdForSite(siteName);
+            }
+
+
+
+        } else if(alarmCode.equals("198092295") || alarmCode.equals("198092550") || alarmCode.equals("198092559") || alarmCode.equals("198092562")
+                || alarmCode.equals("198094422") || alarmCode.equals("198099803") || alarmCode.equals("1014") || alarmCode.equals("198094466") || alarmCode.equals("198200004")){
+            siteId =  siteName.substring(0,siteName.indexOf("_")).trim();
+        }
         else {
-            //HRT150_Char_Borjk_P2_Opex_QZ
-            //case 1: P,C,U = 7 GDZC001_BSC_Site_Gardez001_P1(3201)
-            String version_1_from_field_26_length_7 =  siteName.substring(0, 7).trim();
-            if (siteName.charAt(3) == 'P' || siteName.charAt(3) == 'C' || siteName.charAt(3) == 'U') {
-                //7
-                siteId =version_1_from_field_26_length_7;
-            } else if (siteName.charAt(3) == 'M') {
+            String version_1_from_field_26_length_7 = siteName.substring(0, 7).trim();
+
+            char fourthChar = siteName.charAt(3);
+
+            if (fourthChar == 'P' || fourthChar == 'C' || fourthChar == 'U') {
+                // Set siteId for 'P', 'C', or 'U' in the 4th position
+                siteId = version_1_from_field_26_length_7;
+            } else if (fourthChar == 'M') {
+                // Check for 'M' in the 4th position
                 if (siteName.charAt(4) == 'U') {
+                    // If 5th char is 'U', set siteId using first 8 characters
                     siteId = siteName.substring(0, 8).trim();
-                }else if(siteName.charAt(6) == '('){
+                } else if (siteName.charAt(6) == '(') {
+                    // If 7th char is '(', set siteId using first 6 characters
                     siteId = siteName.substring(0, 6).trim();
-                }
-                else {
-                    //7
+                } else {
+                    // Default case for 'M' in 4th position, use first 7 characters
                     siteId = version_1_from_field_26_length_7;
                 }
-            } else if(siteName.charAt(3) == 'L') {
-                //7
+            } else if (fourthChar == 'L') {
+                // Set siteId for 'L' in the 4th position
                 siteId = version_1_from_field_26_length_7;
-
-            }else if(siteName.indexOf("_UL_") != -1 ){
-                //8
+            } else if (siteName.contains("_UL_")) {
+                // If "_UL_" is found, set siteId using first 9 characters
                 siteId = siteName.substring(0, 9).trim();
-            }else{
-                //6
+            } else {
+                // Default case, set siteId using first 6 characters
                 siteId = siteName.substring(0, 6).trim();
             }
         }
+
 
         zteTrapBody.setSiteName(siteName);
         zteTrapBody.setSiteId(siteId);
@@ -219,6 +244,19 @@ public class ProcessZtePdu {
 
     }
 
+    // Helper method to get RNC ID for specific site names
+    private String getRncIdForSite(String siteName) {
+        switch (siteName) {
+            case "GDZRZ01(7)":
+                return "7";
+            case "HRTZR01-RNC01(3)":
+                return "3";
+            case "KDRZR01-RNC01(4)":
+                return "4";
+            default:
+                return "";
+        }
+    }
 
     public String setUpServiceType(String siteId, String alarmCodeString) {
 
@@ -231,7 +269,8 @@ public class ProcessZtePdu {
        // Check conditions
         if (alarmCode == 200083023 || alarmCode == 200083022 || alarmCode == 199083023 || alarmCode == 199083022 || alarmCode == 198083023 || alarmCode == 198083022) {
             localServiceType = "3G";
-        } else if (alarmCode == 198094422 || alarmCode == 198094420 || alarmCode == 198094419 || alarmCode == 198099803) {
+        } else if (alarmCode == 198094422 || alarmCode == 198094420 || alarmCode == 198094419 || alarmCode == 198099803 || alarmCode == 198200011 || alarmCode == 198200001 ||
+                alarmCode == 1014 || alarmCode == 198094466 || alarmCode == 198200004) {
             localServiceType = "4G";
         }
         else {
@@ -242,50 +281,56 @@ public class ProcessZtePdu {
 
 
 
-
-
-
-
-//        if(alarmCode == 22214L){
-//            localServiceType = "3G";
-//        }
-//        else if (alarmCodes3G.contains(alarmCode)) {
-//            localServiceType = "3G";
-//        } else if (alarmCodes4G.contains(alarmCode)) {
-//            localServiceType = "4G";
-//        }
-//        else if(alarmCode == 65069L){
-//
-//            if(siteId.endsWith("_UL")){
-//                localServiceType = "4G";
-//            }else{
-//                localServiceType = "3G";
-//            }
-//        }
-//        else{
-//            localServiceType = "2G";
-//        }
-
         return localServiceType;
 
     }
 
-    public String setUpDisplaySiteId(String tempSiteId, String temServiceType) {
+
+    private void appendData(ZteTrapBody zte) {
+        try {
+            Files.write(Paths.get(FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendData(PDU pdu,String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public String setUpDisplaySiteId(String tempSiteId, String temServiceType,String alarmRncId, String alarmNodeBId) {
 
         String localDisplaySiteId;
+//        System.out.println("Display-2: "+temServiceType);
 
-        if(temServiceType.equalsIgnoreCase("3G")){
-            if(tempSiteId.charAt(3) == 'M'){
-                localDisplaySiteId =    tempSiteId.substring(0,4).concat("U").concat(tempSiteId.substring(4));
+        if(alarmRncId != null && alarmNodeBId != null && temServiceType.equalsIgnoreCase("3G")){
+            localDisplaySiteId = null;
+        }else{
+            if(temServiceType.equalsIgnoreCase("3G")){
+                System.out.println("Display-3: "+tempSiteId.substring(0,4).concat("U").concat(tempSiteId.substring(4)));
+
+                if(tempSiteId.charAt(3) == 'M'){
+                    localDisplaySiteId =    tempSiteId.substring(0,4).concat("U").concat(tempSiteId.substring(4));
+                }else{
+                    localDisplaySiteId =    tempSiteId.substring(0,3).concat("U").concat(tempSiteId.substring(3));
+                }
+            }
+            else if(temServiceType.equalsIgnoreCase("4G")){
+                localDisplaySiteId = tempSiteId.concat("_UL");
             }else{
-                localDisplaySiteId =    tempSiteId.substring(0,3).concat("U").concat(tempSiteId.substring(3));
+                localDisplaySiteId = tempSiteId;
             }
         }
-        else if(temServiceType.equalsIgnoreCase("4G")){
-            localDisplaySiteId = tempSiteId.concat("_UL");
-        }else{
-            localDisplaySiteId = tempSiteId;
-        }
+
+
 
         return localDisplaySiteId;
     }
