@@ -47,9 +47,9 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
         dispatcher = new MultiThreadedMessageDispatcher(threadPool,
                 new MessageDispatcherImpl());
 
-        //TRANSPORT local
-//        listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
+//        //TRANSPORT local
+        listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
 
 
 //  old server
@@ -58,9 +58,9 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
 
 
         //        TRANSPORT new server
-
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
+//
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
 
         TransportMapping<?> transport;
         if (listenAddress instanceof UdpAddress) {

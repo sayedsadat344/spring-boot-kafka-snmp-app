@@ -1,30 +1,18 @@
 package com.traps.RoshanNOCTraps.traps.hw;
 
 import com.mycompany.app.sharedClasses.HwTrapBody;
-import com.traps.RoshanNOCTraps.db.DbOperation;
-import com.traps.RoshanNOCTraps.db.HwDao;
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
-import com.traps.RoshanNOCTraps.db.ZteDoa;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.smi.OID;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 
 public class ProcessHwPdu {
@@ -43,11 +31,25 @@ public class ProcessHwPdu {
 // Inside your method
     List<Long> alarmIdList = Arrays.asList(
             21807L, 22214L, 65080L, 65070L, 65501L,
-            65033L, 65381L, 29201L, 25622L, 65084L,
-            65067L, 5700L, 65081L, 25621L, 65068L,
-            65502L, 65059L, 65071L, 21825L, 65069L,65090L,65334L
+            65033L, 29201L, 25622L,
+            65067L, 5700L, 65081L, 25621L,
+            65059L, 65071L, 21825L, 65069L,65090L
     );
 
+//    65334L BSC mains failure (no site id at all)
+//    65084L Nodeb air condition alarm
+//    65381L MSC Mains Failure (no site at all)
+//     65502Lrectifier failure
+
+//     65068L rectifier not needed
+//    List<Long> alarmIdList = Arrays.asList(
+//        65068L
+//
+//    );
+
+
+//    MMN013 observe them
+//    65033
 
     private static final String FILE_PATH = "hw-output.txt";
 
@@ -59,6 +61,8 @@ public class ProcessHwPdu {
     }
 
 
+//    e-Khishti
+
     private void processHwPDU(PDU pdu) throws SQLException {
 
         if (pdu.getType() == PDU.TRAP) {
@@ -67,7 +71,9 @@ public class ProcessHwPdu {
 
             if (alarmIdList.contains(intendedAlarmHuawei)) {
 
-//                    System.out.println("PDU: "+pdu);
+                System.out.println("TRAP: "+pdu);
+                appendData(pdu,intendedAlarmHuawei+".txt");
+
                     filterHuaweiTrap(pdu, intendedAlarmHuawei);
 
             }
@@ -77,15 +83,19 @@ public class ProcessHwPdu {
     private void filterHuaweiTrap(PDU pdu,Long intendedAlarmHuawei) throws SQLException {
 
 
+
         HwTrapBody hwTrapBody = new HwTrapBody();
         hwTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.1.0")).toString());
         hwTrapBody.setAlarmClearedTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.15.0")).toString());
 
         String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
 
+
         hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
 
+
         String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
+
         //event time section
         hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
 
@@ -112,11 +122,19 @@ public class ProcessHwPdu {
         //setup display site id
         hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
 
+
+
         if (Long.parseLong(clearOrNot) == 2) {
+
+
             hwTrapBody.setNewOrClear(1L);
 //            produce to kafka
-            KafkaOperation.sendHwTrap(hwTrapBody);
-            //        appendData(hwTrapBody);
+//            KafkaOperation.sendHwTrap(hwTrapBody);
+
+
+
+
+
 //            DbOperation.addHwTrap(hwTrapBody);
 //            this.saveOrUpdateDatabaseHW("insert",pdu);
         }else{
@@ -124,7 +142,10 @@ public class ProcessHwPdu {
             hwTrapBody.setNewOrClear(2L);
 //            hwTrapBody.setId(DbOperation.generateUniqueId());
 //            produce to kafka
-            KafkaOperation.sendHwTrap(hwTrapBody);
+//            KafkaOperation.sendHwTrap(hwTrapBody);
+
+
+
 
 //            System.out.println("HW trap UPDATE: "+hwTrapBody);
 //            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
@@ -132,14 +153,32 @@ public class ProcessHwPdu {
         }
 
 
+        System.out.println("HW trap UPDATE: "+hwTrapBody);
+//
+        appendData(hwTrapBody,hwTrapBody.getAlarmCode()+"-body"+".txt");
+//
+        System.out.println("*******************************************");
 
-//        appendData(hwTrapBody);
-            System.out.println("\nSITEWISE: "+hwTrapBody);
 
-        System.out.println("************************************************");
+    }
 
 
+    private void appendData(PDU pdu, String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendData(HwTrapBody pdu, String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void appendData(HwTrapBody hwTrapBody) {
@@ -172,36 +211,66 @@ public class ProcessHwPdu {
             siteName = extractSiteNameFromInfo(info, 4);
             siteId = extractSiteIdFromSiteName(siteName);
         } else {
-            String untilUnderScoreOnly = siteName.substring(0, siteName.indexOf("_")).trim();
-            String fromDashUntilUnderscore = siteName.substring(siteName.indexOf("-") + 1, siteName.indexOf("_")).trim();
-            String ifHas_UL_From0Until_UL_ = siteName.contains("_UL_") ? siteName.substring(0, siteName.indexOf("_UL_") + 3).trim() : null;
+            String untilUnderScoreOnly = null;
+            String fromDashUntilUnderscore = null;
+            String ifHas_UL_From0Until_UL_ = null;
+
+            int dashIndex = siteName.indexOf("-");
+            int underscoreIndex = siteName.indexOf("_");
+
+
+            untilUnderScoreOnly = getUntilUnderscorePartOfAString(siteName,underscoreIndex);
+            fromDashUntilUnderscore = getSiteIdFromDashToUnderScore(siteName, fromDashUntilUnderscore, dashIndex, underscoreIndex);
+            ifHas_UL_From0Until_UL_ = getUntil_UL_PartOfAString(siteName);
+
 
             switch (alarmCodeHW) {
                 case "25621":
+                case "25622":
+
+                    siteId = resolveSiteIdVersion1(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_);
+                    break;
                 case "29201":
                 case "65059":
-                case "65090":
-                case "65084":
-                case "65069":
-                case "65081":
                 case "65068":
+                case "65069":
                 case "65080":
-                    siteId = resolveSiteId(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_);
+                case "65081":
+                case "65084":
+                case "65090":
+                    siteId = resolveSiteIdVersion2(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_);
+
+                    if(siteId.equalsIgnoreCase("E-CENA") || siteId.equalsIgnoreCase("e-Khis")){
+                        System.out.println("Found: "+hwTrapBody.toString());
+                    }
+
                     break;
 
-                case "65033":
-                case "65501":
-                case "21807":
-                case "65070":
-                case "5700":
-                case "65071":
-                    siteId = fromDashUntilUnderscore;
-                    break;
 
-                case "25622":
+//                case "65033":
+//                case "65070":
+//                case "21807":
+//                case "65071":
+//                case "5700":
+//                case "65501":
+//                    siteId = fromDashUntilUnderscore;
+//                    break;
+
                 case "65067":
+                    siteId = resolveSiteIdVersion3(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_);
+                    break;
+
+
                 case "21825":
+
                 case "65502":
+                case "65033":
+                case "65070":
+                case "21807":
+                case "65071":
+                case "5700":
+                case "65501":
+
                     siteId = siteName.contains("-") ? fromDashUntilUnderscore : untilUnderScoreOnly;
                     break;
 
@@ -218,11 +287,70 @@ public class ProcessHwPdu {
         return hwTrapBody;
     }
 
+    private static String getSiteIdFromDashToUnderScore(String siteName, String fromDashUntilUnderscore, int dashIndex, int underscoreIndex) {
+
+
+
+        if (dashIndex != -1 && underscoreIndex != -1) {
+            // Case 1: Extract the substring between the dash and underscore
+            if (dashIndex < underscoreIndex) {
+                // Case 1: First dash before underscore
+                fromDashUntilUnderscore = siteName.substring(dashIndex + 1, underscoreIndex).trim();
+                System.out.println("fromDashUntilUnderscore: " + fromDashUntilUnderscore);
+            } else {
+                // Case 2: If underscore appears before dash, adjust extraction
+                // Extracting from dash to next underscore (we assume the next underscore is after the first dash)
+                int nextUnderscoreIndex = siteName.indexOf("_", dashIndex);
+                if (nextUnderscoreIndex != -1) {
+                    fromDashUntilUnderscore = siteName.substring(dashIndex + 1, nextUnderscoreIndex).trim();
+                    System.out.println("fromDashUntilUnderscore: " + fromDashUntilUnderscore);
+                }
+            }
+        }
+        return fromDashUntilUnderscore;
+    }
+
+    String getUntilUnderscorePartOfAString(String siteName, int underscoreIndex){
+
+        if (underscoreIndex != -1) {
+            return siteName.substring(0, siteName.indexOf("_")).trim();
+
+        }
+        return null;
+    }
+    String getUntil_UL_PartOfAString(String siteName){
+
+        if (siteName.contains("_UL_")) {
+            return siteName.substring(0, siteName.indexOf("_UL_") + 3).trim();
+        }
+        return null;
+    }
+
+
+
     // Helper method to extract site name from info
     private String extractSiteNameFromInfo(String info, int index) {
         String[] arr = info.split(",");
+
+        // Ensure the index is within bounds; default to index 2 if out of range
+        if (index < 0 || index >= arr.length) {
+            index = 2; // Default to 2 if the given index is out of bounds
+        }
+
+        if (index >= arr.length) { // If index 2 is still out of bounds, return an empty string or handle gracefully
+            return null;
+        }
+
+
         String term = arr[index].trim();
-        return term.substring(term.indexOf("=") + 1);
+
+        // Ensure the term contains "=" before attempting substring extraction
+        int equalsIndex = term.indexOf("=");
+        if (equalsIndex == -1 || equalsIndex == term.length() - 1) {
+            return ""; // Return empty string if "=" is missing or there's no value after "="
+        }
+
+        return term.substring(equalsIndex + 1).trim();
     }
 
     // Helper method to extract site ID from site name
@@ -230,8 +358,9 @@ public class ProcessHwPdu {
         return siteName.substring(0, siteName.indexOf("_")).trim();
     }
 
-    // Helper method to resolve site ID based on versions
-    private String resolveSiteId(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
+
+    private String resolveSiteIdVersion2(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
+
         if (siteName.contains("_UL_")) {
             return ifHas_UL_From0Until_UL_;
         } else if (siteName.contains("-")) {
@@ -241,93 +370,86 @@ public class ProcessHwPdu {
         }
     }
 
+    //IMPORTNAT TEST
+    private String resolveSiteIdVersion3(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
+
+
+
+        int dashIndex = siteName.indexOf("-");
+        int underscoreIndex = siteName.indexOf("_");
+
+        if (siteName.contains("_UL_")) {
+            return ifHas_UL_From0Until_UL_;
+        } else {
+
+            if (dashIndex != -1 && underscoreIndex != -1) {
+                // Case 1: Extract the substring between the dash and underscore
+                if (dashIndex < underscoreIndex) {
+
+                    if(fromDashUntilUnderscore.contains("-")){
+                        return untilUnderScoreOnly;
+                    }
+                   return fromDashUntilUnderscore;
+                }
+            }
+            return untilUnderScoreOnly;
+        }
+    }
+
+
+    private String resolveSiteIdVersion4(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
 
 
 
 
-//    private HwTrapBody extractSiteInfoHW(String info,HwTrapBody hwTrapBody) {
-//
-//        String siteId = null;
-//        String siteName = hwTrapBody.getSiteName().trim();
-//        String alarmCodeHW = hwTrapBody.getAlarmCode();
-//
-////        same condition 21801
-//        if(alarmCodeHW.equals("22214")){
-//
-//            String arr[] = info.split(",");
-//            String term = arr[4].trim();
-//            siteName = term.substring(term.indexOf("=")+1);
-//            siteId = siteName.substring(0,siteName.indexOf("_")).trim();
-//
-//        }
-//        else
-//        {
-//            String version_1_from_field_4 = siteName.substring(0, siteName.indexOf("_")).trim();
-//            String version_2_from_field_4 = siteName.substring(siteName.indexOf("-")+1,siteName.indexOf("_")).trim();
-//            String version_3_from_field_4 = siteName.substring(0, siteName.indexOf("_UL_") + 3).trim();
-//
-//            if(alarmCodeHW.equals("25621") || alarmCodeHW.equals("29201") || alarmCodeHW.equals("65059") || alarmCodeHW.equals("65090")){
-//
-//                if(siteName.indexOf("_UL_") != -1){
-//                    siteId = version_3_from_field_4;
-//                }else if(siteName.indexOf("-") != -1){
-//                    siteId = version_2_from_field_4;
-//                }else{
-//                    siteId = version_1_from_field_4;
-//                }
-//            }
-//            else if(alarmCodeHW.equals("65084") || alarmCodeHW.equals("65069") || alarmCodeHW.equals("65081")  || alarmCodeHW.equals("65068") || alarmCodeHW.equals("65080")){
-//
-//                if(siteName.indexOf("_UL_") != -1){
-//                    siteId = version_3_from_field_4;
-//                }else{
-//                    if(siteName.indexOf("-") != -1){
-//                        siteId = version_2_from_field_4;
-//                    }else{
-//                        siteId = version_1_from_field_4;
-//                    }
-//
-//                }
-//
-//            }
-//            else{
-//                if(alarmCodeHW.equals("65033")  || alarmCodeHW.equals("65501") || alarmCodeHW.equals("21807")||
-//                        alarmCodeHW.equals("65070") || alarmCodeHW.equals("5700")  ||  alarmCodeHW.equals("65071") ){
-//                    siteId = version_2_from_field_4;
-//                    siteName = siteName;
-//                }
-//                else if( alarmCodeHW.equals("25622")){
-////                    same condition alarmCodeHW.equals("22202") ||
-//                    String arr[] = info.split(",");
-//                    String term = arr[7].trim();
-//                    siteName = term.substring(term.indexOf("=")+1);
-//                    siteId = siteName.substring(0,siteName.indexOf("_")).trim();
-//
-//                }
-//                else if(alarmCodeHW.equals("65067")   || alarmCodeHW.equals("21825") || alarmCodeHW.equals("65502")){
-//
-//                    if(siteName.indexOf("-") != -1){
-//                        siteId = version_2_from_field_4;
-//                    }else{
-//                        siteId = version_1_from_field_4;
-//                    }
-//                }
-//                else if(siteId == null || siteId.isEmpty()){
-//                    siteId = "RANDOM";
-//                }
-//
-//            }
-//        }
-//
-//        hwTrapBody.setSiteId(siteId);
-//        hwTrapBody.setSiteName(siteName);
-//
-//        return hwTrapBody;
-//
-//
-//
-//
-//    }
+//        KBL309_UL_QZ //ok
+//        JLDH02-JLD027_25_WIYALA_P3
+//        KBL039_MBSC-KBL266_SHAHRAK_E_TELAHE_PT_P3
+        //KBLU168_SYEED_OMAR_Market_Pul-e-Khishti_CPX_P2
+
+//        KBLU342_QALAE_AHMAD_KHAN_BAGRAMI_SALAAM(KAB302)_P3
+        //        KBL309_UL
+
+
+
+        int dashIndex = siteName.indexOf("-");
+        int underscoreIndex = siteName.indexOf("_");
+
+        if (siteName.contains("_UL_")) {
+            return ifHas_UL_From0Until_UL_;
+        } else {
+
+            if (dashIndex != -1 && underscoreIndex != -1) {
+                // Case 1: Extract the substring between the dash and underscore
+                if (dashIndex < underscoreIndex) {
+                    return fromDashUntilUnderscore;
+                }
+            }
+            return untilUnderScoreOnly;
+        }
+    }
+
+    // Helper method to resolve site ID based on versions
+    private String resolveSiteIdVersion1(String siteName, String untilUnderScoreOnly, String fromDashUntilUnderscore, String ifHas_UL_From0Until_UL_) {
+
+
+
+        String localSiteId = fromDashUntilUnderscore;
+        if(siteName.contains("_UL_")){
+            return ifHas_UL_From0Until_UL_;
+        }else{
+            if(localSiteId.contains("-") ||  localSiteId.length() < 6){
+                return untilUnderScoreOnly;
+            }else{
+                return fromDashUntilUnderscore;
+            }
+        }
+
+
+    }
+
+
+
 
 
     public String setUpServiceType(String siteId, String alarmCodeString) {
@@ -408,7 +530,7 @@ public class ProcessHwPdu {
         String localDisplaySiteId;
 
         if(temServiceType.equalsIgnoreCase("3G")){
-            if(tempSiteId.charAt(3) == 'M'){
+            if(tempSiteId.charAt(3) == 'M'){ //kbl
                 localDisplaySiteId =    tempSiteId.substring(0,4).concat("U").concat(tempSiteId.substring(4));
             }else{
                 localDisplaySiteId =    tempSiteId.substring(0,3).concat("U").concat(tempSiteId.substring(3));

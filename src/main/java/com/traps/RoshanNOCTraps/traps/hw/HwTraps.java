@@ -47,8 +47,8 @@ public class HwTraps extends TrapsConfig implements CommandResponder {
                 new MessageDispatcherImpl());
 
         //local
-//        listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
+        listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
 
 
 //        //TRANSPORT old server
@@ -56,9 +56,9 @@ public class HwTraps extends TrapsConfig implements CommandResponder {
 //                "snmp4j.listenAddress", "udp:10.150.150.35/21171"));
 
         //        TRANSPORT new server
-
-                listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.225/21171"));
+//
+//                listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.225/21171"));
 
 
 

@@ -39,10 +39,10 @@ public class ProcessZtePdu {
             198200004L
     );
 
+//    198094466L
+
 //    private List<Long> alarmValues = Arrays.asList(
-//            199083023L,
-//            198083023L,
-//            200083023L
+//            199087337L
 //    );
 
 
@@ -59,17 +59,13 @@ public class ProcessZtePdu {
     private void processZTEPDU(PDU pdu) throws SQLException {
 
         if (pdu.getType() == PDU.TRAP) {
-
-
-
             String intendedAlarmZteString = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString();
             Long intendedAlarmZte = Long.parseLong(intendedAlarmZteString);
             if (alarmValues.contains(intendedAlarmZte)) {
 
-
-//                appendData(pdu,intendedAlarmZteString+".txt");
+                System.out.println("TRAP: "+pdu);
+                appendData(pdu,intendedAlarmZteString+".txt");
                     filterZteTrap(pdu);
-
 
             }
         }
@@ -124,7 +120,7 @@ public class ProcessZtePdu {
 
             zteTrapBody.setId(DbOperation.generateUniqueId());
 //            kafka send
-            KafkaOperation.sendZteTrap(zteTrapBody);
+//            KafkaOperation.sendZteTrap(zteTrapBody);
 
 
 
@@ -140,7 +136,7 @@ public class ProcessZtePdu {
 
             zteTrapBody.setNewOrClear(2L);
 
-            KafkaOperation.sendZteTrap(zteTrapBody);
+//            KafkaOperation.sendZteTrap(zteTrapBody);
 
 
 
@@ -151,7 +147,19 @@ public class ProcessZtePdu {
 
         System.out.println("\nZTE: "+zteTrapBody);
         System.out.println("*******************************************");
-        appendData(zteTrapBody);
+//        appendData(zteTrapBody);
+
+//        if(zteTrapBody.getSiteId().equalsIgnoreCase("GZN012") || zteTrapBody.getSiteId().equalsIgnoreCase("GZNU012")
+//        || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("GZN012") || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("GZNU012")){
+//            appendData(zteTrapBody,"GZN012-body.txt");
+//        }
+//
+//        if(zteTrapBody.getSiteId().equalsIgnoreCase("MZR159") || zteTrapBody.getSiteId().equalsIgnoreCase("MZRU159")
+//                || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("MZR159") || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("MZRU159")){
+//            appendData(zteTrapBody,"MZR159-body.txt");
+//        }
+
+        appendData(zteTrapBody,zteTrapBody.getAlarmCode()+"-body.txt");
     }
 
 
@@ -169,11 +177,17 @@ public class ProcessZtePdu {
 
         if(alarmCode.equals("199087337") || alarmCode.equals("198087337")){
 
+            //8 rnc and 15 obj
+
             String arr[] = localRNCId.split(",");
 
             siteName = arr[2].trim();
 
             siteId = siteName.substring(0, 7).trim();
+
+            if(siteId.equalsIgnoreCase("GBtsEq")){
+                System.out.println("Found: "+zteTrapBody.toString());
+            }
 
         } else if (alarmCode.equals("199083023") || alarmCode.equals("198083023")) {
             String extractRncIdFromSiteName = siteName.substring(siteName.indexOf("(") + 1, siteName.length() - 1).trim();
@@ -296,6 +310,15 @@ public class ProcessZtePdu {
     }
 
     private void appendData(PDU pdu,String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendData(ZteTrapBody pdu,String file) {
         try {
             Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
