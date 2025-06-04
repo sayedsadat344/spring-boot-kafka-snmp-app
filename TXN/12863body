@@ -1,0 +1,78 @@
+TxnHwTrapBody(id=null, trapId=229293094, linkId=KBL093-only RTN, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 06:21:19Z, alarmClearedTime=2025/06/02 - 06:21:19Z)
+TxnHwTrapBody(id=null, trapId=295699570, linkId=KBL093-only RTN, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 06:21:19Z, alarmClearedTime=2025/06/02 - 06:21:19Z)
+TxnHwTrapBody(id=null, trapId=312655679, linkId=KBL093-only RTN, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 06:21:10Z, alarmClearedTime=2025/06/02 - 06:21:10Z)
+TxnHwTrapBody(id=null, trapId=312655679, linkId=KBL093-only RTN, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 06:21:10Z, alarmClearedTime=2025/06/02 - 06:21:10Z)
+TxnHwTrapBody(id=null, trapId=312655925, linkId=KBL093-only RTN, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 06:22:03Z, alarmClearedTime=2025/06/02 - 06:22:03Z)
+TxnHwTrapBody(id=null, trapId=312683098, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 07:43:22Z, alarmClearedTime=2025/06/02 - 07:43:22Z)
+TxnHwTrapBody(id=null, trapId=312683098, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 07:43:22Z, alarmClearedTime=2025/06/02 - 07:43:22Z)
+TxnHwTrapBody(id=null, trapId=312685858, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 07:50:26Z, alarmClearedTime=2025/06/02 - 07:50:26Z)
+TxnHwTrapBody(id=null, trapId=312685858, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 07:50:26Z, alarmClearedTime=2025/06/02 - 07:50:26Z)
+TxnHwTrapBody(id=null, trapId=312685858, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 07:50:26Z, alarmClearedTime=2025/06/02 - 07:50:26Z)
+TxnHwTrapBody(id=null, trapId=312683098, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:00:57Z, alarmClearedTime=2025/06/02 - 08:00:57Z)
+TxnHwTrapBody(id=null, trapId=312685858, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:01:41Z, alarmClearedTime=2025/06/02 - 08:01:41Z)
+TxnHwTrapBody(id=null, trapId=312690403, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:11:59Z, alarmClearedTime=2025/06/02 - 08:11:59Z)
+TxnHwTrapBody(id=null, trapId=312690403, linkId=MZR117-MZR011, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:14:17Z, alarmClearedTime=2025/06/02 - 08:14:17Z)
+TxnHwTrapBody(id=null, trapId=312373239, linkId=FYB002 TO REFAH FYB ISP, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:29:55Z, alarmClearedTime=2025/06/02 - 08:29:55Z)
+TxnHwTrapBody(id=null, trapId=312373176, linkId=FYB002-ACCA, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:29:54Z, alarmClearedTime=2025/06/02 - 08:29:54Z)
+TxnHwTrapBody(id=null, trapId=312373210, linkId=FYB002-DAB01, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:30:01Z, alarmClearedTime=2025/06/02 - 08:30:01Z)
+TxnHwTrapBody(id=null, trapId=312695804, linkId=FYB002 TO REFAH FYB ISP, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:28:14Z, alarmClearedTime=2025/06/02 - 08:28:14Z)
+TxnHwTrapBody(id=null, trapId=312695799, linkId=FYB002-ACCA, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:28:16Z, alarmClearedTime=2025/06/02 - 08:28:16Z)
+TxnHwTrapBody(id=null, trapId=312695804, linkId=FYB002 TO REFAH FYB ISP, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:28:14Z, alarmClearedTime=2025/06/02 - 08:28:14Z)
+TxnHwTrapBody(id=null, trapId=312695799, linkId=FYB002-ACCA, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:28:16Z, alarmClearedTime=2025/06/02 - 08:28:16Z)
+TxnHwTrapBody(id=null, trapId=312695830, linkId=FYB002-DAB01, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/02 - 08:28:19Z, alarmClearedTime=2025/06/02 - 08:28:19Z)
+TxnHwTrapBody(id=null, trapId=312566599, linkId=AUB Gulbahar Mirror, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/03 - 01:16:55Z, alarmClearedTime=2025/06/03 - 01:16:55Z)
+TxnHwTrapBody(id=null, trapId=312566685, linkId=AUB Gulbahar Mirror, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/03 - 01:16:55Z, alarmClearedTime=2025/06/03 - 01:16:55Z)
+TxnHwTrapBody(id=null, trapId=312995036, linkId=AUB Gulbahar Mirror, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/03 - 01:17:04Z, alarmClearedTime=2025/06/03 - 01:17:04Z)
+TxnHwTrapBody(id=null, trapId=312995064, linkId=AUB Gulbahar Mirror, alarmSeverity=Major, alarmCode=12863, alarmName=IF_CABLE_OPEN, alarmEventType=Equipment, alarmFaultCause=(1)The IF cable is loose or faulty;
+(2)The IF port on the IF board is damaged;
+(3)The power module of the RF unit is faulty., alarmArrivalTime=2025/06/03 - 01:17:19Z, alarmClearedTime=2025/06/03 - 01:17:19Z)

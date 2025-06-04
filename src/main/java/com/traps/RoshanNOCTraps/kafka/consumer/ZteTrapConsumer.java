@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.kafka.consumer;
 
-import com.mycompany.app.sharedClasses.ZteTrapBody;
+import com.mycompany.app.sharedClasses.BssZteTrapBody;
+
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ public class ZteTrapConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZteTrapConsumer.class);
 
 //    @KafkaListener(topics = "ZTE_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
-    public void consume(ZteTrapBody zteTrapBody, Acknowledgment acknowledgment){
+    public void consume(BssZteTrapBody zteTrapBody, Acknowledgment acknowledgment){
 
         int opValue;
 

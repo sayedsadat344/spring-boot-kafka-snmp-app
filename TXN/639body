@@ -1,0 +1,72 @@
+TxnHwTrapBody(id=null, trapId=312682929, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:42:49Z, alarmClearedTime=2025/06/02 - 07:42:49Z)
+TxnHwTrapBody(id=null, trapId=312683226, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:44:03Z, alarmClearedTime=2025/06/02 - 07:44:03Z)
+TxnHwTrapBody(id=null, trapId=312682929, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:49:29Z, alarmClearedTime=2025/06/02 - 07:49:29Z)
+TxnHwTrapBody(id=null, trapId=312683226, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:48:42Z, alarmClearedTime=2025/06/02 - 07:48:42Z)
+TxnHwTrapBody(id=null, trapId=312686463, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:55:52Z, alarmClearedTime=2025/06/02 - 07:55:52Z)
+TxnHwTrapBody(id=null, trapId=312687343, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 07:59:38Z, alarmClearedTime=2025/06/02 - 07:59:38Z)
+TxnHwTrapBody(id=null, trapId=312687343, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:06:49Z, alarmClearedTime=2025/06/02 - 08:06:49Z)
+TxnHwTrapBody(id=null, trapId=312690005, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:10:22Z, alarmClearedTime=2025/06/02 - 08:10:22Z)
+TxnHwTrapBody(id=null, trapId=312686463, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:09:07Z, alarmClearedTime=2025/06/02 - 08:09:07Z)
+TxnHwTrapBody(id=null, trapId=312690005, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:15:29Z, alarmClearedTime=2025/06/02 - 08:15:29Z)
+TxnHwTrapBody(id=null, trapId=312695852, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:30:09Z, alarmClearedTime=2025/06/02 - 08:30:09Z)
+TxnHwTrapBody(id=null, trapId=312697415, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:34:47Z, alarmClearedTime=2025/06/02 - 08:34:47Z)
+TxnHwTrapBody(id=null, trapId=312697415, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:39:43Z, alarmClearedTime=2025/06/02 - 08:39:43Z)
+TxnHwTrapBody(id=null, trapId=312698834, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:41:02Z, alarmClearedTime=2025/06/02 - 08:41:02Z)
+TxnHwTrapBody(id=null, trapId=312698834, linkId=MZR117-MZR011, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:49:00Z, alarmClearedTime=2025/06/02 - 08:49:00Z)
+TxnHwTrapBody(id=null, trapId=312695852, linkId=MZR011-MZR117, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 08:49:05Z, alarmClearedTime=2025/06/02 - 08:49:05Z)
+TxnHwTrapBody(id=null, trapId=312712572, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:40Z, alarmClearedTime=2025/06/02 - 09:25:40Z)
+TxnHwTrapBody(id=null, trapId=312712574, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:40Z, alarmClearedTime=2025/06/02 - 09:25:40Z)
+TxnHwTrapBody(id=null, trapId=312712573, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:40Z, alarmClearedTime=2025/06/02 - 09:25:40Z)
+TxnHwTrapBody(id=null, trapId=312712572, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:44Z, alarmClearedTime=2025/06/02 - 09:25:44Z)
+TxnHwTrapBody(id=null, trapId=312712573, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:44Z, alarmClearedTime=2025/06/02 - 09:25:44Z)
+TxnHwTrapBody(id=null, trapId=312712574, linkId=JLD018 ACG-2, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 09:25:44Z, alarmClearedTime=2025/06/02 - 09:25:44Z)
+TxnHwTrapBody(id=null, trapId=312795334, linkId=KBL012-KBL144, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 11:50:22Z, alarmClearedTime=2025/06/02 - 11:50:22Z)
+TxnHwTrapBody(id=null, trapId=312795334, linkId=KBL012-KBL144, alarmSeverity=Warning, alarmCode=639, alarmName=RADIO_MUTE, alarmEventType=Equipment, alarmFaultCause=(1)Certain other alarms occur;
+(2)The transmitter of the local station is muted manually;
+(3)The IF board is faulty, causing abnormal IF output., alarmArrivalTime=2025/06/02 - 11:50:26Z, alarmClearedTime=2025/06/02 - 11:50:26Z)

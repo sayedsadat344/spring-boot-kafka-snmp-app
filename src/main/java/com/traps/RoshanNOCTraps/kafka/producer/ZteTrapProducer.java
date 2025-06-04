@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.kafka.producer;
 
-import com.mycompany.app.sharedClasses.ZteTrapBody;
+import com.mycompany.app.sharedClasses.BssZteTrapBody;
+
 import org.springframework.messaging.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,17 +18,17 @@ public class ZteTrapProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZteTrapProducer.class);
 
-    private KafkaTemplate<String, ZteTrapBody> kafkaTemplate;
+    private KafkaTemplate<String, BssZteTrapBody> kafkaTemplate;
 
-    public ZteTrapProducer(KafkaTemplate<String, ZteTrapBody> kafkaTemplate) {
+    public ZteTrapProducer(KafkaTemplate<String, BssZteTrapBody> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(ZteTrapBody data){
+    public void sendMessage(BssZteTrapBody data){
 
 //        LOGGER.info(String.format("Message sent -> %s", data.toString()));
 
-        Message<ZteTrapBody> message = MessageBuilder
+        Message<BssZteTrapBody> message = MessageBuilder
                 .withPayload(data)
                 .setHeader(KafkaHeaders.TOPIC, "ZTE_TRAPS")
                 .build();

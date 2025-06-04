@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.kafka.producer;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,15 +15,15 @@ public class HwTrapProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZteTrapProducer.class);
 
-    private KafkaTemplate<String, HwTrapBody> kafkaTemplate;
+    private KafkaTemplate<String, BssHwTrapBody> kafkaTemplate;
 
-    public HwTrapProducer(KafkaTemplate<String, HwTrapBody> kafkaTemplate) {
+    public HwTrapProducer(KafkaTemplate<String, BssHwTrapBody> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendMessage(HwTrapBody data){
+    public void sendMessage(BssHwTrapBody data){
 
-        Message<HwTrapBody> message = MessageBuilder
+        Message<BssHwTrapBody> message = MessageBuilder
                 .withPayload(data)
                 .setHeader(KafkaHeaders.TOPIC, "HW_TRAPS")
                 .build();

@@ -1,6 +1,6 @@
 package com.traps.RoshanNOCTraps.traps.hw;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
 import com.traps.RoshanNOCTraps.RoshanNocTrapsManagementApplication;
 import lombok.Data;
 import org.springframework.boot.SpringApplication;
@@ -12,8 +12,8 @@ import java.util.List;
 
 public class HwData {
 
-    public static List<HwTrapBody> getData(){
-        HwTrapBody trap1 = new HwTrapBody();
+    public static List<BssHwTrapBody> getData(){
+        BssHwTrapBody trap1 = new BssHwTrapBody();
         trap1.setId(null);
         trap1.setNewOrClear(1L);
         trap1.setTrapId("384990965");
@@ -34,7 +34,7 @@ public class HwData {
         trap1.setAlarmCellId(null);
         trap1.setAlarmRncId(null);
 
-        HwTrapBody trap2 = new HwTrapBody();
+        BssHwTrapBody trap2 = new BssHwTrapBody();
         trap2.setId(null);
         trap2.setNewOrClear(2L);
         trap2.setTrapId("384990965");
@@ -55,7 +55,7 @@ public class HwData {
         trap2.setAlarmCellId(null);
         trap2.setAlarmRncId(null);
 
-        HwTrapBody trap3 = new HwTrapBody();
+        BssHwTrapBody trap3 = new BssHwTrapBody();
         trap3.setId(null);
         trap3.setNewOrClear(1L);
         trap3.setTrapId("384992796");
@@ -76,7 +76,7 @@ public class HwData {
         trap3.setAlarmCellId(null);
         trap3.setAlarmRncId(null);
 
-        HwTrapBody trap4 = new HwTrapBody();
+        BssHwTrapBody trap4 = new BssHwTrapBody();
         trap4.setId(null);
         trap4.setNewOrClear(2L);
         trap4.setTrapId("384992796");
@@ -98,7 +98,7 @@ public class HwData {
         trap4.setAlarmRncId(null);
 
         // Add all instances to an array
-        List<HwTrapBody> traps = new ArrayList<>(Arrays.asList(trap1, trap2, trap3, trap4));
+        List<BssHwTrapBody> traps = new ArrayList<>(Arrays.asList(trap1, trap2, trap3, trap4));
 
         return traps;
     }

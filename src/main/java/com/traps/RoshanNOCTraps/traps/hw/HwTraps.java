@@ -1,10 +1,7 @@
 package com.traps.RoshanNOCTraps.traps.hw;
 
-import com.traps.RoshanNOCTraps.db.HwDaoImpl;
+import com.traps.RoshanNOCTraps.traps.TrapDecodeService;
 import com.traps.RoshanNOCTraps.traps.trapsConfig.TrapsConfig;
-import com.traps.RoshanNOCTraps.traps.zte.ProcessZtePdu;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.snmp4j.*;
 import org.snmp4j.mp.MPv1;
 import org.snmp4j.mp.MPv2c;
@@ -18,9 +15,6 @@ import org.snmp4j.transport.DefaultTcpTransportMapping;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 import org.snmp4j.util.MultiThreadedMessageDispatcher;
 import org.snmp4j.util.ThreadPool;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -47,18 +41,16 @@ public class HwTraps extends TrapsConfig implements CommandResponder {
                 new MessageDispatcherImpl());
 
         //local
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
-
-
-//        //TRANSPORT old server
 //        listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:10.150.150.35/21171"));
+//                "snmp4j.listenAddress", "udp:192.168.25.125/21171"));
+
+
+
 
         //        TRANSPORT new server
 //
-//                listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:192.168.25.225/21171"));
+                listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.225/21171"));
 
 
 

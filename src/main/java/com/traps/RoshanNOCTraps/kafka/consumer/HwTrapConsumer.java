@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.kafka.consumer;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
+
 import com.traps.RoshanNOCTraps.db.DbOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class HwTrapConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(HwTrapConsumer.class);
 
 //    @KafkaListener(topics = "HW_TRAPS", groupId = "${spring.kafka.consumer.group-id}")
-    public void consume(HwTrapBody hwTrapBody, Acknowledgment acknowledgment){
+    public void consume(BssHwTrapBody hwTrapBody, Acknowledgment acknowledgment){
 
 
         int opValue;

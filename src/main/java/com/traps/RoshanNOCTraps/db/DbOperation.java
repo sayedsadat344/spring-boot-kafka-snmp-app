@@ -1,7 +1,8 @@
 package com.traps.RoshanNOCTraps.db;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
-import com.mycompany.app.sharedClasses.ZteTrapBody;
+
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
+import com.mycompany.app.sharedClasses.BssZteTrapBody;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class DbOperation {
 
 
 
-    public static int addZteTrap(ZteTrapBody zteTrapBody) {
+    public static int addZteTrap(BssZteTrapBody zteTrapBody) {
         System.out.println("Here it comes insert zte");
         try{
             zteTrapBody.setId(generateUniqueId());
@@ -74,7 +75,7 @@ public class DbOperation {
     }
 
 
-    public static int updateZteTrap(String id, ZteTrapBody zteTrapBody) {
+    public static int updateZteTrap(String id, BssZteTrapBody zteTrapBody) {
         System.out.println("Here it comes update zte");
         try{
             String sql = """
@@ -111,7 +112,7 @@ public class DbOperation {
 
 
 
-    public static int addHwTrap(HwTrapBody hwTrapBody) {
+    public static int addHwTrap(BssHwTrapBody hwTrapBody) {
 //        System.out.println("Here it comes insert hw");
         try{
             hwTrapBody.setId(generateUniqueId());
@@ -159,7 +160,7 @@ public class DbOperation {
     }
 
 
-    public static int updateHwTrap(String id, HwTrapBody hwTrapBody) {
+    public static int updateHwTrap(String id, BssHwTrapBody hwTrapBody) {
 //        System.out.println("Here it comes update hw");
         try{
             String sql = """

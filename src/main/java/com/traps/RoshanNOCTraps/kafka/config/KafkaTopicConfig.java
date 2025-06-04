@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
-//@Configuration
+@Configuration
 public class KafkaTopicConfig {
 
 
@@ -21,5 +21,14 @@ public class KafkaTopicConfig {
         return TopicBuilder.name("HW_TRAPS").partitions(1).replicas(2)
                 .build();
     }
+
+
+    @Bean
+    public NewTopic txnHwTrapsTopic(){
+        return TopicBuilder.name("TXN_HW_TRAPS").partitions(1).replicas(2)
+                .build();
+    }
+
+
 
 }

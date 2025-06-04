@@ -1,52 +1,33 @@
 package com.traps.RoshanNOCTraps.traps.zte;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
-import com.mycompany.app.sharedClasses.ZteTrapBody;
-import com.traps.RoshanNOCTraps.db.DbOperation;
+
+import com.mycompany.app.sharedClasses.BssZteTrapBody;
+
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
-import com.traps.RoshanNOCTraps.db.ZteDoa;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.smi.OID;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+import org.snmp4j.smi.Variable;
+
+import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
+
+import static com.traps.RoshanNOCTraps.db.DbOperation.generateUniqueId;
+
+@Component
 public class ProcessZtePdu {
 
-//
-//    private final ZteDoa zteDoa;
-//    @Autowired
-//    public ProcessZtePdu(ZteDoa zteDoa){
-//        this.zteDoa = zteDoa;
-//    }
 
 
-    private List<Long> alarmValues = Arrays.asList(
-            199087337L, 198092550L, 198087337L, 198092295L,
-            198083023L, 199083023L, 198092562L, 198094422L, 198092559L,198099803L,198200011L,198200001L,1014L,198094466L,
-            198200004L
-    );
-
-//    198094466L
-
-//    private List<Long> alarmValues = Arrays.asList(
-//            199087337L
-//    );
-
-
-    private static final String FILE_PATH = "zte-output.txt";
 
     public void processPdu(CommandResponderEvent crEvent) throws SQLException {
 
@@ -55,117 +36,185 @@ public class ProcessZtePdu {
 
     }
 
-
     private void processZTEPDU(PDU pdu) throws SQLException {
+        try {
+            if (pdu != null && pdu.getType() == PDU.TRAP) {
+                Long intendedAlarmZte = getVariableAsLong(pdu,ZteOidConstants.ALARM_CODE);
+                if (ZteOidConstants.alarmValues.contains(intendedAlarmZte)) {
+                    BssZteTrapBody trapBody = createBssZteTrapBody(pdu);
+                    KafkaOperation.sendZteTrap(trapBody);
 
-        if (pdu.getType() == PDU.TRAP) {
-            String intendedAlarmZteString = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString();
-            Long intendedAlarmZte = Long.parseLong(intendedAlarmZteString);
-            if (alarmValues.contains(intendedAlarmZte)) {
-
-                System.out.println("TRAP: "+pdu);
-                appendData(pdu,intendedAlarmZteString+".txt");
-                    filterZteTrap(pdu);
-
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    ////GOTTA SHARE IN ANOTHER CALLSSS
+
+
+    public Long getVariableAsLong(PDU pdu, OID oid) {
+        try {
+            String value = getVariableAsString(pdu, oid);
+            return value.isEmpty() ? null : Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 
-    private void filterZteTrap(PDU pdu) throws SQLException {
 
-//        System.out.println("Trap -1 :");
-        ZteTrapBody zteTrapBody = new ZteTrapBody();
+    public String getVariableAsString(PDU pdu, OID oid) {
+        Variable variable = pdu.getVariable(oid);
+        return variable != null ? variable.toString() : "";
+    }
 
-        zteTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.24")).toString());
-        zteTrapBody.setAlarmCode(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.11")).toString());
+    public void appendData(PDU pdu, String folder, String fileName) {
+        try {
+            // Ensure the directory exists
+            Path dirPath = Paths.get(folder);
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
 
-        String eventTime = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.3")).toString();
-        String alarmNewOrClear = pdu.getVariable(new OID("1.3.6.1.6.3.1.1.4.1.0")).toString();
-//        System.out.println("Trap -2 :");
+            // Construct full file path
+            Path filePath = dirPath.resolve(fileName);
 
-        if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.1")) {
-//            System.out.println("Trap -3 :");
-            //new alarm
-            zteTrapBody.setAlarmArrivalTime(eventTime);
-            zteTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.14")).toString());
-            zteTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.26")).toString());
+            // Write data to the file
+            Files.write(filePath, (pdu.toString() + System.lineSeparator()).getBytes(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
-            String localRNCId = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.15")).toString();
-            String objectInstanceName_zte = pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.8")).toString();
-
-//            System.out.println("Trap -4 :");
-            //extract site info
-            zteTrapBody = extractSiteInfoZTE(zteTrapBody,objectInstanceName_zte,localRNCId);
-
-//            System.out.println("Trap -5 :");
-
-            //setup site id
-            zteTrapBody.setSiteId(setUpSiteId(zteTrapBody.getSiteId()));
-//            System.out.println("Trap -6 :");
-
-            //setup service type
-            zteTrapBody.setAlarmServiceType(setUpServiceType(zteTrapBody.getSiteId(),zteTrapBody.getAlarmCode()));
-//            System.out.println("Trap -7 :");
-
-            //setup display site id
-            zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(zteTrapBody.getSiteId(),zteTrapBody.getAlarmServiceType(),zteTrapBody.getAlarmRncId(),zteTrapBody.getAlarmNodeBId()));
-//            System.out.println("Trap -8 :");
-
-            //other details
-            zteTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.3902.4101.1.3.1.4")).toLong());
-//            System.out.println("Trap -9 :");
-
-//            System.out.println("ZTE trap INSERT: "+zteTrapBody);
-            zteTrapBody.setNewOrClear(1L);
-
-            zteTrapBody.setId(DbOperation.generateUniqueId());
-//            kafka send
-//            KafkaOperation.sendZteTrap(zteTrapBody);
-
-
-
-            ///DATABASE CONNECTIVITY ////
-//            saveOrUpdateDatabaseZTE("insert",pdu);
-//            DbOperation.addZteTrap(zteTrapBody);
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        else if (alarmNewOrClear.equals("1.3.6.1.4.1.3902.4101.1.4.1.2")) {
-
-            //old alarm
-            zteTrapBody.setAlarmClearedTime(eventTime);
-
-            zteTrapBody.setNewOrClear(2L);
-
-//            KafkaOperation.sendZteTrap(zteTrapBody);
+    }
 
 
+    private void appendData(BssZteTrapBody zte) {
+        try {
+            Files.write(Paths.get(ZteOidConstants.FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
-//            DbOperation.updateZteTrap(zteTrapBody.getTrapId(),zteTrapBody);
-            ///DATABASE CONNECTIVITY ////
-//            saveOrUpdateDatabaseZTE("update",pdu);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
-        System.out.println("\nZTE: "+zteTrapBody);
+
+
+    private void appendData(BssZteTrapBody pdu,String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void appendData(BssZteTrapBody pdu, String folderName, String fileName) {
+        try {
+            Path folderPath = Paths.get(folderName);
+            if (!Files.exists(folderPath)) {
+                Files.createDirectories(folderPath); // Ensure the folder exists
+            }
+
+            Path filePath = folderPath.resolve(fileName); // Construct full file path
+
+            Files.write(
+                    filePath,
+                    (pdu.toString() + System.lineSeparator()).getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void logTrap(BssZteTrapBody trap) {
+        System.out.println("\nZTE Trap Processed:");
+        System.out.println("ID: " + trap.getTrapId());
+        System.out.println("Alarm Code: " + trap.getAlarmCode());
+        System.out.println("Site: " + trap.getSiteName());
+        System.out.println("Type: " + (trap.getNewOrClear() == 1 ? "NEW" : "CLEARED"));
         System.out.println("*******************************************");
-//        appendData(zteTrapBody);
-
-//        if(zteTrapBody.getSiteId().equalsIgnoreCase("GZN012") || zteTrapBody.getSiteId().equalsIgnoreCase("GZNU012")
-//        || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("GZN012") || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("GZNU012")){
-//            appendData(zteTrapBody,"GZN012-body.txt");
-//        }
-//
-//        if(zteTrapBody.getSiteId().equalsIgnoreCase("MZR159") || zteTrapBody.getSiteId().equalsIgnoreCase("MZRU159")
-//                || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("MZR159") || zteTrapBody.getDisplaySiteId().equalsIgnoreCase("MZRU159")){
-//            appendData(zteTrapBody,"MZR159-body.txt");
-//        }
-
-        appendData(zteTrapBody,zteTrapBody.getAlarmCode()+"-body.txt");
     }
 
 
 
 
-    private ZteTrapBody extractSiteInfoZTE(ZteTrapBody zteTrapBody, String objectInstanceName_zte, String localRNCId) {
+    private BssZteTrapBody createBssZteTrapBody(PDU pdu) {
+
+
+        BssZteTrapBody zteTrapBody = new BssZteTrapBody();
+        // Extract basic fields using constants
+        zteTrapBody.setTrapId(getVariableAsString(pdu, ZteOidConstants.ALARM_TRAP_ID));
+        zteTrapBody.setAlarmCode(getVariableAsString(pdu, ZteOidConstants.ALARM_CODE));
+        String eventTime = getVariableAsString(pdu, ZteOidConstants.ALARM_EVENT_TIME);
+        String alarmNewOrClear = getVariableAsString(pdu, ZteOidConstants.SNMP_TRAP_OID);
+
+        // Process based on trap type
+        if (isNewAlarm(alarmNewOrClear)) {
+            processNewAlarm(pdu, zteTrapBody, eventTime);
+        } else if (isClearedAlarm(alarmNewOrClear)) {
+            processClearedAlarm(zteTrapBody, eventTime);
+        }
+        logTrap(zteTrapBody);
+
+        return zteTrapBody;
+
+    }
+
+    private boolean isNewAlarm(String trapOid) {
+        return ZteOidConstants.ALARM_NEW_TRAP.equals(new OID(trapOid));
+    }
+
+    private boolean isClearedAlarm(String trapOid) {
+        return ZteOidConstants.ALARM_CLEARED_TRAP.equals(new OID(trapOid));
+    }
+
+    private void processNewAlarm(PDU pdu, BssZteTrapBody zteTrapBody, String eventTime) {
+        zteTrapBody.setAlarmArrivalTime(eventTime);
+        zteTrapBody.setAlarmName(getVariableAsString(pdu, ZteOidConstants.ALARM_NAME));
+        zteTrapBody.setSiteName(getVariableAsString(pdu, ZteOidConstants.SITE_NAME));
+
+        String localRNCId = getVariableAsString(pdu, ZteOidConstants.LOCAL_RNC_ID);
+        String objectInstanceName = getVariableAsString(pdu, ZteOidConstants.OBJECT_INSTANCE_NAME);
+
+        // Extract site info (keep your existing method)
+        zteTrapBody = extractSiteInfoZTE(zteTrapBody, objectInstanceName, localRNCId);
+
+        // Setup site info (keep your existing methods)
+        zteTrapBody.setSiteId(setUpSiteId(zteTrapBody.getSiteId()));
+        zteTrapBody.setAlarmServiceType(setUpServiceType(
+                zteTrapBody.getSiteId(),
+                zteTrapBody.getAlarmCode()
+        ));
+        zteTrapBody.setDisplaySiteId(setUpDisplaySiteId(
+                zteTrapBody.getSiteId(),
+                zteTrapBody.getAlarmServiceType(),
+                zteTrapBody.getAlarmRncId(),
+                zteTrapBody.getAlarmNodeBId()
+        ));
+
+        // Other details
+        zteTrapBody.setAlarmEventType(getVariableAsLong(pdu, ZteOidConstants.ALARM_EVENT_TYPE));
+        zteTrapBody.setNewOrClear(1L);
+        zteTrapBody.setId(generateUniqueId());
+    }
+    private void processClearedAlarm(BssZteTrapBody zteTrapBody, String eventTime) {
+        zteTrapBody.setAlarmClearedTime(eventTime);
+        zteTrapBody.setNewOrClear(2L);
+    }
+
+
+
+
+    private BssZteTrapBody extractSiteInfoZTE(BssZteTrapBody zteTrapBody, String objectInstanceName_zte, String localRNCId) {
 
     String alarmCode = zteTrapBody.getAlarmCode();
     String nodeBId = null;
@@ -214,7 +263,22 @@ public class ProcessZtePdu {
 
         } else if(alarmCode.equals("198092295") || alarmCode.equals("198092550") || alarmCode.equals("198092559") || alarmCode.equals("198092562")
                 || alarmCode.equals("198094422") || alarmCode.equals("198099803") || alarmCode.equals("1014") || alarmCode.equals("198094466") || alarmCode.equals("198200004")){
-            siteId =  siteName.substring(0,siteName.indexOf("_")).trim();
+//            siteId =  siteName.substring(0,siteName.indexOf("_")).trim();
+
+            // Handle cases with underscore
+             if (siteName.contains("_")) {
+                 siteId =  siteName.substring(0, siteName.indexOf("_")).trim();
+            }
+             else  if (siteName.contains("(") && siteName.contains(")")) {
+                 siteId =  siteName.substring(0, siteName.indexOf("(")).trim();
+             }else{
+                 siteId = "RANDOM";
+             }
+
+
+            //198092295
+            //HRTMU166(166)
+            //Device power down
         }
         else {
             String version_1_from_field_26_length_7 = siteName.substring(0, 7).trim();
@@ -300,39 +364,11 @@ public class ProcessZtePdu {
     }
 
 
-    private void appendData(ZteTrapBody zte) {
-        try {
-            Files.write(Paths.get(FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void appendData(PDU pdu,String file) {
-        try {
-            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void appendData(ZteTrapBody pdu,String file) {
-        try {
-            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
     public String setUpDisplaySiteId(String tempSiteId, String temServiceType,String alarmRncId, String alarmNodeBId) {
 
         String localDisplaySiteId;
-//        System.out.println("Display-2: "+temServiceType);
 
         if(alarmRncId != null && alarmNodeBId != null && temServiceType.equalsIgnoreCase("3G")){
             localDisplaySiteId = null;

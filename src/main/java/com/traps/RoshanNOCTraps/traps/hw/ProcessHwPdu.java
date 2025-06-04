@@ -1,57 +1,28 @@
 package com.traps.RoshanNOCTraps.traps.hw;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
+
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
+
 import com.traps.RoshanNOCTraps.db.KafkaOperation;
+
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.smi.OID;
+import org.snmp4j.smi.Variable;
+
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
-
+@Component
 public class ProcessHwPdu {
 
 
-//    private HwDao hwDao;
-//    @Autowired
-//    public ProcessHwPdu(HwDao hwDao){
-//        this.hwDao = hwDao;
-//
-//    }
-
-
-
-    // Inside your method
-// Inside your method
-    List<Long> alarmIdList = Arrays.asList(
-            21807L, 22214L, 65080L, 65070L, 65501L,
-            65033L, 29201L, 25622L,
-            65067L, 5700L, 65081L, 25621L,
-            65059L, 65071L, 21825L, 65069L,65090L
-    );
-
-//    65334L BSC mains failure (no site id at all)
-//    65084L Nodeb air condition alarm
-//    65381L MSC Mains Failure (no site at all)
-//     65502Lrectifier failure
-
-//     65068L rectifier not needed
-//    List<Long> alarmIdList = Arrays.asList(
-//        65068L
-//
-//    );
-
-
-//    MMN013 observe them
-//    65033
-
-    private static final String FILE_PATH = "hw-output.txt";
 
     public void processPdu(CommandResponderEvent crEvent) throws SQLException {
 
@@ -61,147 +32,256 @@ public class ProcessHwPdu {
     }
 
 
-//    e-Khishti
-
     private void processHwPDU(PDU pdu) throws SQLException {
 
-        if (pdu.getType() == PDU.TRAP) {
-            String intendedAlarmHwString = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.9.0")).toString();
-            Long intendedAlarmHuawei = Long.parseLong(intendedAlarmHwString);
 
-            if (alarmIdList.contains(intendedAlarmHuawei)) {
+        try {
+            if (pdu.getType() == PDU.TRAP) {
 
-                System.out.println("TRAP: "+pdu);
-                appendData(pdu,intendedAlarmHuawei+".txt");
+                Long intendedAlarmHw = getVariableAsLong(pdu,HwOidConstants.HW_INTENDED_ALARM);
+                if (HwOidConstants.alarmIdList.contains(intendedAlarmHw)) {
+                    BssHwTrapBody hwTrapBody = createHuaweiTrapBody(pdu,intendedAlarmHw);
+                    KafkaOperation.sendHwTrap(hwTrapBody);
 
-                    filterHuaweiTrap(pdu, intendedAlarmHuawei);
-
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
     }
 
-    private void filterHuaweiTrap(PDU pdu,Long intendedAlarmHuawei) throws SQLException {
 
 
+    private BssHwTrapBody createHuaweiTrapBody(PDU pdu, Long intendedAlarmHw) {
+        BssHwTrapBody hwTrapBody = new BssHwTrapBody();
 
-        HwTrapBody hwTrapBody = new HwTrapBody();
-        hwTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.1.0")).toString());
-        hwTrapBody.setAlarmClearedTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.15.0")).toString());
+        hwTrapBody.setTrapId(getVariableAsString(pdu, HwOidConstants.HW_TRAP_ID));
+        hwTrapBody.setAlarmClearedTime(getVariableAsString(pdu, HwOidConstants.HW_ALARM_CLEARED_TIME));
+        hwTrapBody.setSiteName(getVariableAsString(pdu, HwOidConstants.HW_SITE_NAME));
+        hwTrapBody.setAlarmArrivalTime(getVariableAsString(pdu, HwOidConstants.HW_EVENT_TIME));
 
-        String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
+        String clearOrNot = getVariableAsString(pdu, HwOidConstants.HW_CLEAR_OR_NOT);
 
+        hwTrapBody.setAlarmCode(intendedAlarmHw.toString());
 
-        hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
+        hwTrapBody.setAlarmName(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NAME));
+        hwTrapBody.setAlarmEventType(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_EVENT_TYPE));
+        hwTrapBody.setAlarmNetType(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NET_TYPE));
+        hwTrapBody.setAlarmSeverity(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_SEVERITY));
 
-
-        String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
-
-        //event time section
-        hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
-
-        //alarm identification
-        hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
-        hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
-        hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
-        hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
-
-        hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
+        String objectInstanceNameHw = getVariableAsString(pdu, HwOidConstants.HW_OBJECT_INSTANCE_NAME);
+        hwTrapBody = extractSiteInfoHW(objectInstanceNameHw.trim(), hwTrapBody);
 
 
-        //set up site info
-        hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
-
-
-
-        //setup site id
         hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(), hwTrapBody.getAlarmCode()));
+        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(), hwTrapBody.getAlarmServiceType()));
 
-        //setup service type
-        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
-
-        //setup display site id
-        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
-
-
-
-        if (Long.parseLong(clearOrNot) == 2) {
-
-
+        if (isNewHuaweiAlarm(clearOrNot)) {
             hwTrapBody.setNewOrClear(1L);
-//            produce to kafka
-//            KafkaOperation.sendHwTrap(hwTrapBody);
-
-
-
-
-
-//            DbOperation.addHwTrap(hwTrapBody);
-//            this.saveOrUpdateDatabaseHW("insert",pdu);
-        }else{
-
+        } else {
             hwTrapBody.setNewOrClear(2L);
-//            hwTrapBody.setId(DbOperation.generateUniqueId());
-//            produce to kafka
-//            KafkaOperation.sendHwTrap(hwTrapBody);
-
-
-
-
-//            System.out.println("HW trap UPDATE: "+hwTrapBody);
-//            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
-//            this.saveOrUpdateDatabaseHW("update",pdu);
         }
 
+        logTrap(hwTrapBody);
+        return hwTrapBody;
+    }
 
-        System.out.println("HW trap UPDATE: "+hwTrapBody);
-//
-        appendData(hwTrapBody,hwTrapBody.getAlarmCode()+"-body"+".txt");
-//
+
+    /// GOTTA SHARE WITH ANOTHER FILE
+
+    public Long getVariableAsLong(PDU pdu, OID oid) {
+        try {
+            String value = getVariableAsString(pdu, oid);
+            return value.isEmpty() ? null : Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+
+    public String getVariableAsString(PDU pdu, OID oid) {
+        Variable variable = pdu.getVariable(oid);
+        return variable != null ? variable.toString() : "";
+    }
+
+    public void appendData(PDU pdu,String file) {
+        try {
+            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public void logTrap(BssHwTrapBody trap) {
+        System.out.println("\nHW Trap Processed:");
+        System.out.println("ID: " + trap.getTrapId());
+        System.out.println("Alarm Code: " + trap.getAlarmCode());
+        System.out.println("Site: " + trap.getSiteName());
+        System.out.println("Type: " + (trap.getNewOrClear() == 1 ? "NEW" : "CLEARED"));
         System.out.println("*******************************************");
-
-
-    }
-
-
-    private void appendData(PDU pdu, String file) {
-        try {
-            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void appendData(HwTrapBody pdu, String file) {
-        try {
-            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void appendData(HwTrapBody hwTrapBody) {
-        try {
-            Files.write(Paths.get(FILE_PATH), (hwTrapBody.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void appendData(PDU pdu) {
-        try {
-            Files.write(Paths.get(FILE_PATH), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
 
-    private HwTrapBody extractSiteInfoHW(String info, HwTrapBody hwTrapBody) {
+    //////////////////////////////////////
+
+
+//    private void processNewHuaweiAlarm(PDU pdu, BssHwTrapBody hwTrapBody, Long alarmCode, String eventTime) {
+//
+//        hwTrapBody.setAlarmArrivalTime(eventTime);
+//        hwTrapBody.setAlarmCode(alarmCode.toString());
+//
+//        hwTrapBody.setAlarmName(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NAME));
+//        hwTrapBody.setAlarmEventType(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_EVENT_TYPE));
+//        hwTrapBody.setAlarmNetType(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NET_TYPE));
+//        hwTrapBody.setAlarmSeverity(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_SEVERITY));
+//
+//        String objectInstanceNameHw = getVariableAsString(pdu, HwOidConstants.HW_OBJECT_INSTANCE_NAME);
+//        hwTrapBody = extractSiteInfoHW(objectInstanceNameHw.trim(), hwTrapBody);
+//
+//
+//        hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+//        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(), hwTrapBody.getAlarmCode()));
+//        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(), hwTrapBody.getAlarmServiceType()));
+//
+//        hwTrapBody.setNewOrClear(1L);
+//    }
+
+
+    private boolean isNewHuaweiAlarm(String clearOrNot) {
+        return "2".equals(clearOrNot);
+    }
+
+    private boolean isClearedHuaweiAlarm(String clearOrNot) {
+        return !"2".equals(clearOrNot);
+    }
+
+//    private void processClearedHuaweiAlarm(BssHwTrapBody hwTrapBody, Long alarmCode, String eventTime) {
+//        hwTrapBody.setAlarmCode(alarmCode.toString());
+//        hwTrapBody.setAlarmClearedTime(eventTime);
+//        hwTrapBody.setAlarmArrivalTime(eventTime);
+//
+//        hwTrapBody.setAlarmName(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NAME));
+//        hwTrapBody.setAlarmEventType(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_EVENT_TYPE));
+//        hwTrapBody.setAlarmNetType(getVariableAsString(pdu, HwOidConstants.HW_ALARM_NET_TYPE));
+//        hwTrapBody.setAlarmSeverity(getVariableAsLong(pdu, HwOidConstants.HW_ALARM_SEVERITY));
+//
+//        String objectInstanceNameHw = getVariableAsString(pdu, HwOidConstants.HW_OBJECT_INSTANCE_NAME);
+//        hwTrapBody = extractSiteInfoHW(objectInstanceNameHw.trim(), hwTrapBody);
+//
+//
+//        hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+//        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(), hwTrapBody.getAlarmCode()));
+//        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(), hwTrapBody.getAlarmServiceType()));
+//
+//
+//        hwTrapBody.setNewOrClear(2L);
+//    }
+
+
+
+
+//    private void filterHuaweiTrap(PDU pdu,Long intendedAlarmHuawei) throws SQLException {
+//
+//
+//
+//        BssHwTrapBody hwTrapBody = new BssHwTrapBody();
+//        hwTrapBody.setTrapId(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.1.0")).toString());
+//        hwTrapBody.setAlarmClearedTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.15.0")).toString());
+//     hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
+//
+//        String clearOrNot = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.12.0")).toString();
+//
+//
+//        hwTrapBody.setSiteName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.4.0")).toString());
+//
+//
+//        String objectInstanceName_hw = pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.27.0")).toString();
+//
+//        //event time section
+//        hwTrapBody.setAlarmArrivalTime(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.3.0")).toString());
+//
+//        //alarm identification
+//        hwTrapBody.setAlarmCode(intendedAlarmHuawei.toString());
+//        hwTrapBody.setAlarmName(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.28.0")).toString());
+//        hwTrapBody.setAlarmEventType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.10.0")).toLong());
+//        hwTrapBody.setAlarmNetType(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.6.0")).toString());
+//
+//        hwTrapBody.setAlarmSeverity(pdu.getVariable(new OID("1.3.6.1.4.1.2011.2.15.2.4.3.3.11.0")).toLong());
+//
+//
+//        //set up site info
+//        hwTrapBody = extractSiteInfoHW(objectInstanceName_hw.trim(),hwTrapBody);
+//
+//
+//
+//        //setup site id
+//        hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
+//
+//        //setup service type
+//        hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(),hwTrapBody.getAlarmCode()));
+//
+//        //setup display site id
+//        hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(),hwTrapBody.getAlarmServiceType()));
+//
+//
+//
+//        if (Long.parseLong(clearOrNot) == 2) {
+//
+//
+//            hwTrapBody.setNewOrClear(1L);
+////            produce to kafka
+//            KafkaOperation.sendHwTrap(hwTrapBody);
+//
+//
+//
+//
+//
+////            DbOperation.addHwTrap(hwTrapBody);
+////            this.saveOrUpdateDatabaseHW("insert",pdu);
+//        }else{
+//
+//            hwTrapBody.setNewOrClear(2L);
+////            hwTrapBody.setId(DbOperation.generateUniqueId());
+////            produce to kafka
+//            KafkaOperation.sendHwTrap(hwTrapBody);
+//
+//
+//
+//
+////            System.out.println("HW trap UPDATE: "+hwTrapBody);
+////            DbOperation.updateHwTrap(hwTrapBody.getTrapId(), hwTrapBody);
+////            this.saveOrUpdateDatabaseHW("update",pdu);
+//        }
+//
+//
+//        System.out.println("HW trap UPDATE: "+hwTrapBody);
+////
+//
+////
+//        System.out.println("*******************************************");
+//
+//
+//    }
+//
+
+
+
+
+    private BssHwTrapBody extractSiteInfoHW(String info, BssHwTrapBody hwTrapBody) {
         String siteId = null;
         String siteName = hwTrapBody.getSiteName().trim();
         String alarmCodeHW = hwTrapBody.getAlarmCode();
@@ -589,5 +669,61 @@ public class ProcessHwPdu {
         return result;
     }
 
+
+    public void appendData(PDU pdu, String folder, String fileName) {
+        try {
+            // Ensure the directory exists
+            Path dirPath = Paths.get(folder);
+            if (!Files.exists(dirPath)) {
+                Files.createDirectories(dirPath);
+            }
+
+            // Construct full file path
+            Path filePath = dirPath.resolve(fileName);
+
+            // Write data to the file
+            Files.write(filePath, (pdu.toString() + System.lineSeparator()).getBytes(),
+                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private void appendData(PDU pdu, String file) {
+//        try {
+//            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void appendData(BssHwTrapBody pdu, String file) {
+//        try {
+//            Files.write(Paths.get(file), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+//    private void appendData(BssHwTrapBody hwTrapBody) {
+//        try {
+//            Files.write(Paths.get(FILE_PATH), (hwTrapBody.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void appendData(PDU pdu) {
+//        try {
+//            Files.write(Paths.get(FILE_PATH), (pdu.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }

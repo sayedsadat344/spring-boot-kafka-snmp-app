@@ -1,0 +1,8 @@
+TxnHwTrapBody(id=null, trapId=312661719, linkId=KDR017-A, alarmSeverity=Critical, alarmCode=12306, alarmName=RELAY_ALARM_MAJOR, alarmEventType=Equipment, alarmFaultCause=(1)There is an major alarm input;
+(2)The housekeeping input interface of the board reports the alarm by default. The alarm is reported in the default status., alarmArrivalTime=2025/06/02 - 06:39:33Z, alarmClearedTime=2025/06/02 - 06:39:33Z)
+TxnHwTrapBody(id=null, trapId=312661719, linkId=KDR017-A, alarmSeverity=Critical, alarmCode=12306, alarmName=RELAY_ALARM_MAJOR, alarmEventType=Equipment, alarmFaultCause=(1)There is an major alarm input;
+(2)The housekeeping input interface of the board reports the alarm by default. The alarm is reported in the default status., alarmArrivalTime=2025/06/02 - 06:39:42Z, alarmClearedTime=2025/06/02 - 06:39:42Z)
+TxnHwTrapBody(id=null, trapId=313005683, linkId=KDR018-A, alarmSeverity=Major, alarmCode=12306, alarmName=RELAY_ALARM_MAJOR, alarmEventType=Equipment, alarmFaultCause=(1)There is an major alarm input;
+(2)The housekeeping input interface of the board reports the alarm by default. The alarm is reported in the default status., alarmArrivalTime=2025/06/03 - 02:15:03Z, alarmClearedTime=2025/06/03 - 02:15:03Z)
+TxnHwTrapBody(id=null, trapId=313005683, linkId=KDR018-A, alarmSeverity=Major, alarmCode=12306, alarmName=RELAY_ALARM_MAJOR, alarmEventType=Equipment, alarmFaultCause=(1)There is an major alarm input;
+(2)The housekeeping input interface of the board reports the alarm by default. The alarm is reported in the default status., alarmArrivalTime=2025/06/03 - 02:17:18Z, alarmClearedTime=2025/06/03 - 02:17:18Z)

@@ -1,6 +1,6 @@
 package com.traps.RoshanNOCTraps.db;
 
-import com.mycompany.app.sharedClasses.ZteTrapBody;
+import com.mycompany.app.sharedClasses.BssZteTrapBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,7 +21,7 @@ public class ZteDaoImpl implements ZteDoa{
 
 
     @Override
-    public int addZteTrap(ZteTrapBody zteTrapBody) {
+    public int addZteTrap(BssZteTrapBody zteTrapBody) {
         System.out.println("Here it comes insert zte");
        try{
            zteTrapBody.setId(generateUniqueId());
@@ -71,7 +71,7 @@ public class ZteDaoImpl implements ZteDoa{
     }
 
     @Override
-    public int updateZteTrap(String id, ZteTrapBody zteTrapBody) {
+    public int updateZteTrap(String id, BssZteTrapBody zteTrapBody) {
         System.out.println("Here it comes update zte");
       try{
             String sql = """

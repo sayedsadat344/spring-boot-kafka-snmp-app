@@ -1,6 +1,7 @@
 package com.traps.RoshanNOCTraps.db;
 
-import com.mycompany.app.sharedClasses.HwTrapBody;
+
+import com.mycompany.app.sharedClasses.BssHwTrapBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ public class HwDaoImpl implements HwDao{
     }
 
     @Override
-    public int addHwTrap(HwTrapBody hwTrapBody) {
+    public int addHwTrap(BssHwTrapBody hwTrapBody) {
         System.out.println("Here it comes insert hw");
         try{
             hwTrapBody.setId(generateUniqueId());
@@ -68,7 +69,7 @@ public class HwDaoImpl implements HwDao{
     }
 
     @Override
-    public int updateHwTrap(String id, HwTrapBody hwTrapBody) {
+    public int updateHwTrap(String id, BssHwTrapBody hwTrapBody) {
         System.out.println("Here it comes update hw");
        try{
            String sql = """

@@ -1,5 +1,6 @@
 package com.traps.RoshanNOCTraps.traps.zte;
 
+import com.traps.RoshanNOCTraps.traps.TrapDecodeService;
 import com.traps.RoshanNOCTraps.traps.hw.ProcessHwPdu;
 import com.traps.RoshanNOCTraps.traps.trapsConfig.TrapsConfig;
 import lombok.AllArgsConstructor;
@@ -48,19 +49,17 @@ public class ZteTraps extends TrapsConfig implements CommandResponder {
                 new MessageDispatcherImpl());
 
 //        //TRANSPORT local
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.125/162"));
 
 
-//  old server
-//           listenAddress = GenericAddress.parse(System.getProperty(
-//             "snmp4j.listenAddress", "udp:10.150.150.35/162"));
+
 
 
         //        TRANSPORT new server
 //
-//        listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
+        listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
 
         TransportMapping<?> transport;
         if (listenAddress instanceof UdpAddress) {
