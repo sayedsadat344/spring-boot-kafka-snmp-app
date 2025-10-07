@@ -11,9 +11,14 @@ public class ZteOidConstants {
 
     public static List<Long> alarmValues = Arrays.asList(
             199087337L, 198092550L, 198087337L, 198092295L,
-            198083023L, 199083023L, 198092562L, 198094422L, 198092559L,198099803L,198200011L,198200001L,1014L,198094466L,
-            198200004L
+            198083023L, 199083023L, 198092562L, 198094422L,
+            198099803L, 198200011L, 198200001L,
+            1014L, 198094466L, 198200004L,
+            198092551L, 198092552L,
+            198094420L, 198097604L
     );
+
+
 
     public static final String FILE_PATH = "zte-output.txt";
 
@@ -33,4 +38,6 @@ public class ZteOidConstants {
     // Trap type OIDs
     public static final OID ALARM_NEW_TRAP = new OID("1.3.6.1.4.1.3902.4101.1.4.1.1");
     public static final OID ALARM_CLEARED_TRAP = new OID("1.3.6.1.4.1.3902.4101.1.4.1.2");
+    public static final OID ALARM_CLEARED_TRAP_2 = new OID("1.3.6.1.4.1.3902.4101.1.4.1.3");
+
 }

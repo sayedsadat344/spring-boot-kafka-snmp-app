@@ -9,27 +9,11 @@ public class TxnHwOidConstants {
 
 
     public static List<Long> alarmIdList = Arrays.asList(
-            13444L,
-            235L,
-            13538L,
-            12863L,
-            166L,
-            1L,
-            13417L,
-            13930L,
-            265L,
-            12587L,
-            412L,
-            631L,
-            638L,
-            12793L,
-            12794L,
-            8L,
-            639L,
-            640L,
-            12305L,
-            383L,
-            12306L
+            13444L, 235L, 13538L, 12863L, 166L,
+            1L, 13417L, 13930L, 265L, 12587L,
+            412L, 631L, 638L, 12793L, 12794L,
+            8L, 639L, 640L, 12305L, 383L,
+            12306L, 5700L, 6380L
     );
 
 
