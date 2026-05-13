@@ -12,43 +12,14 @@ public class HwOidConstants {
     public static List<Long> alarmIdList = Arrays.asList(
             21807L, 22214L, 65080L, 65070L, 65501L,
             65033L, 29201L, 25622L,
-            65067L, 5700L, 25621L,
+            65067L, 25621L,
             65071L, 21825L, 65069L,
             65090L, 65050L, 65060L,
-            1014L,
+            1014L, 21805L,
             65084L, 26108L,
             29213L
     );
 
-
-
-
-//    25888
-//            21541
-//
-//
-//            21801
-//            22202
-//
-//            65059
-//            65068
-//            65034
-//            65412
-//            65091
-//            65502
-//            65042
-//            65081
-
-//    65334L BSC mains failure (no site id at all)
-//    65084L Nodeb air condition alarm
-//    65381L MSC Mains Failure (no site at all)
-//     65502Lrectifier failure
-
-//     65068L rectifier not needed
-//    List<Long> alarmIdList = Arrays.asList(
-//        65068L
-//
-//    );
 
 
 

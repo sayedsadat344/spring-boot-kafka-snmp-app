@@ -11,7 +11,7 @@ public class ServiceTypes {
     );
 
     public static final Set<Long> CODES_4G = Set.of(
-            29201L, 29840L, 29249L, 29213L, 198094420L,
+            29201L, 29840L, 29249L, 29213L, 198094420L, 21805L,
             198094422L, 198094466L, 198200001L, 198200004L, 198200011L
     );
 

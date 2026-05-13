@@ -45,15 +45,15 @@ public class TxnHwTraps extends TrapsConfig implements CommandResponder {
                 new MessageDispatcherImpl());
 
 //        //TRANSPORT local
-//        listenAddress = GenericAddress.parse(System.getProperty(
-//                "snmp4j.listenAddress", "udp:192.168.25.125/21173"));
+        listenAddress = GenericAddress.parse(System.getProperty(
+                "snmp4j.listenAddress", "udp:192.168.25.125/21173"));
 
 
 
         //        TRANSPORT new server
 
-        listenAddress = GenericAddress.parse(System.getProperty(
-                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
+//        listenAddress = GenericAddress.parse(System.getProperty(
+//                "snmp4j.listenAddress", "udp:192.168.25.225/162"));
 
         TransportMapping<?> transport;
         if (listenAddress instanceof UdpAddress) {

@@ -9,26 +9,27 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-
     @Bean
-    public NewTopic zteTrapTopic(){
-        return TopicBuilder.name("ZTE_TRAPS").partitions(1).replicas(2)
+    public NewTopic zteTrapTopic() {
+        return TopicBuilder.name("ZTE_TRAPS")
+                .partitions(6)
+                .replicas(2)
                 .build();
     }
 
     @Bean
-    public NewTopic hwTrapsTopic(){
-        return TopicBuilder.name("HW_TRAPS").partitions(1).replicas(2)
+    public NewTopic hwTrapsTopic() {
+        return TopicBuilder.name("HW_TRAPS")
+                .partitions(6)
+                .replicas(2)
                 .build();
     }
-
 
     @Bean
-    public NewTopic txnHwTrapsTopic(){
-        return TopicBuilder.name("TXN_HW_TRAPS").partitions(1).replicas(2)
+    public NewTopic txnHwTrapsTopic() {
+        return TopicBuilder.name("TXN_HW_TRAPS")
+                .partitions(6)
+                .replicas(2)
                 .build();
     }
-
-
-
 }

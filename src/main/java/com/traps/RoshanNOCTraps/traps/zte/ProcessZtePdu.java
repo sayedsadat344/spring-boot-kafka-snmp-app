@@ -39,13 +39,13 @@ public class ProcessZtePdu {
             if(pdu != null && pdu.getType() == PDU.TRAP){
                 Long intendedAlarmZte = getVariableAsLong(pdu, ZteOidConstants.ALARM_CODE);
                 if(ZteOidConstants.alarmValues.contains(intendedAlarmZte)){
-                    appendData(pdu, "BSSZTE", intendedAlarmZte.toString());
+//                    appendData(pdu, "BSSZTE", intendedAlarmZte.toString());
 
 
                     BssZteTrapBody trapBody = createBssZteTrapBody(pdu);
 
                     if(trapBody != null){
-                        appendData(trapBody, "BSSZTE", intendedAlarmZte.toString());
+//                        appendData(trapBody, "BSSZTE", intendedAlarmZte.toString());
                         KafkaOperation.sendZteTrap(trapBody);
                         logTrap(trapBody);
                     }
@@ -251,12 +251,17 @@ public class ProcessZtePdu {
                 siteId = siteName.length() > 7 ? siteName.substring(0, 7).trim() : siteName;
             }
 
-            if(siteId.equalsIgnoreCase("GBtsEq")){
-                System.out.println("Found: " + zteTrapBody.toString());
 
-                //do something
-
+            if (!siteId.matches(".*\\d{3}$")) {
+                return null;
             }
+
+//            if(siteId.equalsIgnoreCase("GBtsEq")){
+//                System.out.println("Found: " + zteTrapBody.toString());
+//
+//                //do something
+//
+//            }
 
         }
 //        else if(alarmCode.equals("199087342")){
@@ -308,13 +313,16 @@ public class ProcessZtePdu {
 
 
         } else if(alarmCode.equals("198094420") || alarmCode.equals("198097604") || alarmCode.equals("198200001") || alarmCode.equals("198200011")){
-//            || alarmCode.equals("198094461")
+
             if(siteName.contains("_") ){
                 siteId = siteName.substring(0, siteName.indexOf("_")).trim();
-            } else {
-                siteId = "RANDOM";
             }
-        } else if(alarmCode.equals("198099803")){
+            else if(siteName.contains("(")){
+                siteId = siteName.substring(0, siteName.indexOf("("));
+            } else {
+                siteId = siteName.length() > 7 ? siteName.substring(0, 7).trim() : siteName;
+            }
+        }  else if(alarmCode.equals("198099803")){
             // Handle cases with underscore
             //empty site and missing site
             if(siteName.contains("_")){
@@ -323,6 +331,10 @@ public class ProcessZtePdu {
                 siteId = siteName.substring(0, siteName.indexOf("(")).trim();
             } else {
                 siteId = siteName;
+            }
+
+            if(siteId.contains("HRTZ")){
+                return null;
             }
         } else {
             String version_1_from_field_26_length_7 = siteName.substring(0, 7).trim();

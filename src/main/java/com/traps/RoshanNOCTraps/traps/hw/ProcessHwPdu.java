@@ -38,11 +38,13 @@ public class ProcessHwPdu {
         try {
             if (pdu.getType() == PDU.TRAP) {
 
+
                 Long intendedAlarmHw = getVariableAsLong(pdu,HwOidConstants.HW_INTENDED_ALARM);
                 if (HwOidConstants.alarmIdList.contains(intendedAlarmHw)) {
-                    appendData(pdu,"BSSHW",intendedAlarmHw.toString());
+
+//                    appendData(pdu,"BSSHW",intendedAlarmHw.toString());
                     BssHwTrapBody hwTrapBody = createHuaweiTrapBody(pdu,intendedAlarmHw);
-                    appendData(hwTrapBody,"BSSHW",intendedAlarmHw.toString());
+//                    appendData(hwTrapBody,"BSSHW",intendedAlarmHw.toString());
 
                     KafkaOperation.sendHwTrap(hwTrapBody);
 
@@ -101,14 +103,7 @@ public class ProcessHwPdu {
 
         hwTrapBody.setSiteId(setUpSiteId(hwTrapBody.getSiteId()));
 
-//        System.out.println("*************************************");
-//
-//
-//        System.out.println("Site id: "+hwTrapBody.getSiteId());
-//        System.out.println("Site name: "+hwTrapBody.getSiteName());
-//        System.out.println("Code: "+hwTrapBody.getAlarmCode());
-//
-//        System.out.println("****************************************");
+
 
         hwTrapBody.setAlarmServiceType(setUpServiceType(hwTrapBody.getSiteId(), hwTrapBody.getAlarmCode(),hwTrapBody.getSiteName()));
         hwTrapBody.setDisplaySiteId(setUpDisplaySiteId(hwTrapBody.getSiteId(), hwTrapBody.getAlarmServiceType(),intendedAlarmHw));
@@ -228,7 +223,7 @@ public class ProcessHwPdu {
 //                case "65068":
                 case "65069":
                 case "65080":
-//                case "65081":
+                case "21805":
                 case "65084":
                 case "65090":
                     siteId = resolveSiteIdVersion2(siteName, untilUnderScoreOnly, fromDashUntilUnderscore, ifHas_UL_From0Until_UL_,alarmCodeHW);
