@@ -25,6 +25,8 @@ public class KafkaTopicConfig {
                 .build();
     }
 
+
+    //this one is having no data (not write to this topic)
     @Bean
     public NewTopic txnHwTrapsTopic() {
         return TopicBuilder.name("TXN_HW_TRAPS")

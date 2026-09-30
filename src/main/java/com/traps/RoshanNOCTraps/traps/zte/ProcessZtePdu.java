@@ -14,11 +14,13 @@ import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 
 import static com.traps.RoshanNOCTraps.db.DbOperation.generateUniqueId;
@@ -27,6 +29,9 @@ import static com.traps.RoshanNOCTraps.db.DbOperation.generateUniqueId;
 public class ProcessZtePdu {
 
 
+    private static final String ZTE_INVESTIGATION_FOLDER =
+            "ZTE-TRAP-INVESTIGATION";
+
     public void processPdu(CommandResponderEvent crEvent) throws SQLException {
 
         PDU pdu = crEvent.getPDU();
@@ -34,31 +39,154 @@ public class ProcessZtePdu {
 
     }
 
+
+
+
+
     private void processZTEPDU(PDU pdu) throws SQLException {
         try {
-            if(pdu != null && pdu.getType() == PDU.TRAP){
-                Long intendedAlarmZte = getVariableAsLong(pdu, ZteOidConstants.ALARM_CODE);
-                if(ZteOidConstants.alarmValues.contains(intendedAlarmZte)){
-//                    appendData(pdu, "BSSZTE", intendedAlarmZte.toString());
-
-
-                    BssZteTrapBody trapBody = createBssZteTrapBody(pdu);
-
-                    if(trapBody != null){
-//                        appendData(trapBody, "BSSZTE", intendedAlarmZte.toString());
-                        KafkaOperation.sendZteTrap(trapBody);
-                        logTrap(trapBody);
-                    }
-
-
-                }
+            if (pdu == null || pdu.getType() != PDU.TRAP) {
+                return;
             }
+
+            Long intendedAlarmZte =
+                    getVariableAsLong(pdu, ZteOidConstants.ALARM_CODE);
+
+            if (intendedAlarmZte == null ||
+                    !ZteOidConstants.alarmValues.contains(intendedAlarmZte)) {
+                return;
+            }
+
+            String alarmCode = intendedAlarmZte.toString();
+
+            // 1. SNMP trap received
+            appendZteInvestigation(
+                    alarmCode,
+                    "TRAP RECEIVED | " + LocalDateTime.now()
+                            + " | PDU: " + pdu
+            );
+
+            appendData(
+                    pdu,
+                    "BSSZTE-TRAPS",
+                    alarmCode,
+                    LocalDateTime.now()
+            );
+
+            // 2. Create Kafka body
+            BssZteTrapBody trapBody = createBssZteTrapBody(pdu);
+
+            if (trapBody == null) {
+                appendZteInvestigation(
+                        alarmCode,
+                        "BODY CREATION FAILED | " + LocalDateTime.now()
+                );
+                return;
+            }
+
+            // 3. Body successfully created
+            appendZteInvestigation(
+                    alarmCode,
+                    "BODY CREATED | " + LocalDateTime.now()
+                            + " | Trap ID: " + trapBody.getTrapId()
+                            + " | Alarm Code: " + trapBody.getAlarmCode()
+            );
+
+            appendData(
+                    trapBody,
+                    "BSSZTE-TRAPS-BODIES",
+                    alarmCode,
+                    LocalDateTime.now()
+            );
+
+            // 4. Kafka send initiated
+            appendZteInvestigation(
+                    alarmCode,
+                    "KAFKA SEND INITIATED | " + LocalDateTime.now()
+                            + " | Trap ID: " + trapBody.getTrapId()
+                            + " | Alarm Code: " + trapBody.getAlarmCode()
+            );
+
+            KafkaOperation.sendZteTrap(trapBody);
+
+            // 5. Kafka send method returned
+            appendZteInvestigation(
+                    alarmCode,
+                    "KAFKA SEND CALL COMPLETED | " + LocalDateTime.now()
+                            + " | Trap ID: " + trapBody.getTrapId()
+            );
+
+            logTrap(trapBody);
+
         } catch (Exception e) {
+
+            String alarmCode = "UNKNOWN";
+
+            try {
+                Long intendedAlarmZte =
+                        getVariableAsLong(pdu, ZteOidConstants.ALARM_CODE);
+
+                if (intendedAlarmZte != null) {
+                    alarmCode = intendedAlarmZte.toString();
+                }
+            } catch (Exception ignored) {
+            }
+
+            appendZteInvestigation(
+                    alarmCode,
+                    "PROCESSING EXCEPTION | " + LocalDateTime.now()
+                            + " | Error: " + e
+            );
+
             e.printStackTrace();
         }
-
-
     }
+
+
+    private void appendZteInvestigation(
+            String alarmCode,
+            String line) {
+
+        try {
+            Path dirPath =
+                    Paths.get(ZTE_INVESTIGATION_FOLDER);
+
+            Files.createDirectories(dirPath);
+
+            Path filePath =
+                    dirPath.resolve(alarmCode + ".log");
+
+            Files.write(
+                    filePath,
+                    (line + System.lineSeparator())
+                            .getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    private void processZTEPDU(PDU pdu) throws SQLException {
+//        try {
+//            if(pdu != null && pdu.getType() == PDU.TRAP){
+//                Long intendedAlarmZte = getVariableAsLong(pdu, ZteOidConstants.ALARM_CODE);
+//                if(ZteOidConstants.alarmValues.contains(intendedAlarmZte)){
+//                    appendData(pdu, "BSSZTE-TRAPS", intendedAlarmZte.toString(), LocalDateTime.now());
+//                    BssZteTrapBody trapBody = createBssZteTrapBody(pdu);
+//                    if(trapBody != null){
+//                        appendData(trapBody, "BSSZTE-TRAPS-BODIES", intendedAlarmZte.toString(),LocalDateTime.now());
+//                        KafkaOperation.sendZteTrap(trapBody);
+//                        logTrap(trapBody);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     ////GOTTA SHARE IN ANOTHER CALLSSS
@@ -79,30 +207,51 @@ public class ProcessZtePdu {
         return variable != null ? variable.toString() : "";
     }
 
-    public void appendData(PDU pdu, String folder, String fileName) {
+    public void appendData(PDU pdu, String folder, String fileName, LocalDateTime now) {
         try {
             // Ensure the directory exists
             Path dirPath = Paths.get(folder);
-            if(!Files.exists(dirPath)){
+
+            if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
             }
 
             // Construct full file path
             Path filePath = dirPath.resolve(fileName);
 
+            String line = now + " - " + pdu + System.lineSeparator();
+
             // Write data to the file
-            Files.write(filePath, (pdu.toString() + System.lineSeparator()).getBytes(),
-                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.write(
+                    filePath,
+                    line.getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND
+            );
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    private void appendData(BssZteTrapBody zte) {
+    private void appendData(BssZteTrapBody pdu, String folderName, String fileName, LocalDateTime now) {
         try {
-            Files.write(Paths.get(ZteOidConstants.FILE_PATH), (zte.toString() + System.lineSeparator()).getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Path folderPath = Paths.get(folderName);
+
+            if (!Files.exists(folderPath)) {
+                Files.createDirectories(folderPath); // Ensure the folder exists
+            }
+
+            Path filePath = folderPath.resolve(fileName); // Construct full file path
+
+            String line = now + " - " + pdu + System.lineSeparator();
+
+            Files.write(
+                    filePath,
+                    line.getBytes(),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND
+            );
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -119,26 +268,7 @@ public class ProcessZtePdu {
         }
     }
 
-    private void appendData(BssZteTrapBody pdu, String folderName, String fileName) {
-        try {
-            Path folderPath = Paths.get(folderName);
-            if(!Files.exists(folderPath)){
-                Files.createDirectories(folderPath); // Ensure the folder exists
-            }
 
-            Path filePath = folderPath.resolve(fileName); // Construct full file path
-
-            Files.write(
-                    filePath,
-                    (pdu.toString() + System.lineSeparator()).getBytes(),
-                    StandardOpenOption.CREATE,
-                    StandardOpenOption.APPEND
-            );
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public void logTrap(BssZteTrapBody trap) {
@@ -189,6 +319,11 @@ public class ProcessZtePdu {
         String localRNCId = getVariableAsString(pdu, ZteOidConstants.LOCAL_RNC_ID);
         String objectInstanceName = getVariableAsString(pdu, ZteOidConstants.OBJECT_INSTANCE_NAME);
 
+        // Other details
+        zteTrapBody.setAlarmEventType(getVariableAsLong(pdu, ZteOidConstants.ALARM_EVENT_TYPE));
+        zteTrapBody.setNewOrClear(1L);
+        zteTrapBody.setId(generateUniqueId());
+
         // Extract site info (keep your existing method)
         zteTrapBody = extractSiteInfoZTE(zteTrapBody, objectInstanceName, localRNCId);
 
@@ -209,10 +344,7 @@ public class ProcessZtePdu {
                 zteTrapBody.getAlarmNodeBId()
         ));
 
-        // Other details
-        zteTrapBody.setAlarmEventType(getVariableAsLong(pdu, ZteOidConstants.ALARM_EVENT_TYPE));
-        zteTrapBody.setNewOrClear(1L);
-        zteTrapBody.setId(generateUniqueId());
+
     }
 
     private void processClearedAlarm(BssZteTrapBody zteTrapBody, String eventTime) {
@@ -231,7 +363,42 @@ public class ProcessZtePdu {
         String siteName = zteTrapBody.getSiteName();
 
 
-        if(alarmCode.equals("199087337") || alarmCode.equals("198087337")){
+
+        if(alarmCode.equals("199087337")){
+
+
+            String arr[] = localRNCId.split(",");
+
+
+            if(arr.length < 3){
+                return null;
+            }
+
+            siteName = arr[2].trim();
+
+            if(siteName.contains("_")){
+                siteId = siteName.substring(0, siteName.indexOf("_")).trim();
+            } else if(siteName.contains("(")){
+                siteId = siteName.substring(0, siteName.indexOf("("));
+            } else {
+                siteId = siteName.length() > 7 ? siteName.substring(0, 7).trim() : siteName;
+            }
+
+
+            if (!siteId.matches(".*\\d{3}$")) {
+                return null;
+            }
+
+//            if(siteId.equalsIgnoreCase("GBtsEq")){
+//                System.out.println("Found: " + zteTrapBody.toString());
+//
+//                //do something
+//
+//            }
+
+        }
+
+        else if(alarmCode.equals("198087337")){
 
 
             String arr[] = localRNCId.split(",");

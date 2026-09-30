@@ -36,6 +36,7 @@ public class KafkaOperation {
         hwTrapProducer.sendMessage(hwTrapBody);
     }
 
+
     public static void sendZteTrap(BssZteTrapBody zteTrapBody){
         zteTrapProducer.sendMessage(zteTrapBody);
     }

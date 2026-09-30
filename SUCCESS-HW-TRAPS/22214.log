@@ -1,0 +1,13 @@
+2026-09-28T16:42:25.186900100 | Alarm ID: 458100521 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 2 | Offset: 104 | SUCCESS
+2026-09-28T16:42:40.430777300 | Alarm ID: 458098927 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 3 | Offset: 102 | SUCCESS
+2026-09-28T16:43:28.688064 | Alarm ID: 458100600 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 111 | SUCCESS
+2026-09-28T16:43:54.333323300 | Alarm ID: 458100600 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 114 | SUCCESS
+2026-09-28T16:44:29.164616100 | Alarm ID: 458100802 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 108 | SUCCESS
+2026-09-28T16:47:05.241585500 | Alarm ID: 458100802 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 109 | SUCCESS
+2026-09-28T16:48:33.157780900 | Alarm ID: 458100990 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 2 | Offset: 114 | SUCCESS
+2026-09-28T16:48:34.639962700 | Alarm ID: 458100997 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 123 | SUCCESS
+2026-09-28T16:48:55.441704700 | Alarm ID: 458100997 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 124 | SUCCESS
+2026-09-28T16:50:54.426688800 | Alarm ID: 458101095 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 111 | SUCCESS
+2026-09-28T16:54:11.025754900 | Alarm ID: 458098951 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 4 | Offset: 117 | SUCCESS
+2026-09-28T16:54:28.356234900 | Alarm ID: 458101095 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 115 | SUCCESS
+2026-09-28T16:54:56.467052400 | Alarm ID: 458100990 | Alarm Code: 22214 | Attempt: 1 | Topic: HW_TRAPS | Partition: 2 | Offset: 117 | SUCCESS

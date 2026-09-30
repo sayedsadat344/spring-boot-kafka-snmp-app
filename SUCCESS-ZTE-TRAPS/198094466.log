@@ -1,0 +1,10 @@
+2026-09-28T12:27:09.219314100 | Alarm ID: 1718089543675 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 6 | SUCCESS
+2026-09-28T12:27:22.349646900 | Alarm ID: 1718089543685 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 7 | SUCCESS
+2026-09-28T12:27:22.538913500 | Alarm ID: 1718089543686 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 2 | Offset: 11 | SUCCESS
+2026-09-28T12:27:32.270217800 | Alarm ID: 1718089543675 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 11 | SUCCESS
+2026-09-28T12:27:37.835102300 | Alarm ID: 1718089543685 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 14 | SUCCESS
+2026-09-28T12:27:37.945145900 | Alarm ID: 1718089543706 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 2 | Offset: 13 | SUCCESS
+2026-09-28T12:27:55.720942600 | Alarm ID: 1718089543686 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 2 | Offset: 14 | SUCCESS
+2026-09-28T12:28:12.853357800 | Alarm ID: 1718089543706 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 2 | Offset: 15 | SUCCESS
+2026-09-28T13:03:47.822627800 | Alarm ID: 1718089543873 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 26 | SUCCESS
+2026-09-28T13:04:47.808262700 | Alarm ID: 1718089543873 | Alarm Code: 198094466 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 28 | SUCCESS

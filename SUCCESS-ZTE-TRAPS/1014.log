@@ -1,0 +1,16 @@
+2026-09-28T12:27:06.488231900 | Alarm ID: 1718089543613 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 3 | Offset: 0 | SUCCESS
+2026-09-28T12:27:20.487262200 | Alarm ID: 1718089543614 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 6 | SUCCESS
+2026-09-28T12:27:20.489497200 | Alarm ID: 1718089543615 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 17 | SUCCESS
+2026-09-28T12:27:28.155122400 | Alarm ID: 1718089543621 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 7 | SUCCESS
+2026-09-28T12:27:28.181286600 | Alarm ID: 1718089543620 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 3 | Offset: 2 | SUCCESS
+2026-09-28T12:27:29.288518 | Alarm ID: 1718089543622 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 10 | SUCCESS
+2026-09-28T12:27:36.475273700 | Alarm ID: 1718089543612 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 13 | SUCCESS
+2026-09-28T12:41:34.469930800 | Alarm ID: 1718089543761 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 17 | SUCCESS
+2026-09-28T12:42:06.464529400 | Alarm ID: 1718089543761 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 18 | SUCCESS
+2026-09-28T12:56:29.471004500 | Alarm ID: 1718089543839 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 28 | SUCCESS
+2026-09-28T13:20:10.446228700 | Alarm ID: 1718089543937 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 39 | SUCCESS
+2026-09-28T13:20:52.437933300 | Alarm ID: 1718089543937 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 40 | SUCCESS
+2026-09-28T13:22:19.310931100 | Alarm ID: 1718089543839 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 42 | SUCCESS
+2026-09-28T13:32:30.425950200 | Alarm ID: 1718089543993 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 49 | SUCCESS
+2026-09-28T13:32:50.422527800 | Alarm ID: 1718089543993 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 50 | SUCCESS
+2026-09-28T15:33:58.326391700 | Alarm ID: 1718089544293 | Alarm Code: 1014 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 5 | Offset: 54 | SUCCESS

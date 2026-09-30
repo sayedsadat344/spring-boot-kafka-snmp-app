@@ -39,17 +39,20 @@ public class ServiceTypes {
 
     public static String checkMultiServiceTypes(String siteName,String siteId,Long alarmId){
 
-        if(siteId.charAt(3) == 'U'){
-            return "3G";
-        }else  if(siteId.charAt(3) == 'M' && siteId.charAt(4) == 'U'){
-            return "3G";
-        } else if(siteName.contains("_3G")){
-            return "3G";
-        } else if(siteName.contains(siteId+"_UL")){
-            return "4G";
-        }else{
-            return "2G";
-        }
+      if(siteId != null){
+          if(siteId.charAt(3) == 'U'){
+              return "3G";
+          }else  if(siteId.charAt(3) == 'M' && siteId.charAt(4) == 'U'){
+              return "3G";
+          } else if(siteName.contains("_3G")){
+              return "3G";
+          } else if(siteName.contains(siteId+"_UL")){
+              return "4G";
+          }else{
+              return "2G";
+          }
+      }else
+          return "2G";
 
     }
 }
