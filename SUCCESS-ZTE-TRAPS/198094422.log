@@ -1,2 +1,14 @@
 2026-09-28T12:27:15.216230100 | Alarm ID: 1732079346034 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 5 | SUCCESS
 2026-09-28T12:27:34.535293800 | Alarm ID: 1732079346034 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 1 | Offset: 13 | SUCCESS
+2026-10-12T16:12:37.810212100 | Alarm ID: 1732079355093 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 6 | SUCCESS
+2026-10-12T16:12:37.815038400 | Alarm ID: 1732079355088 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 5 | Offset: 2 | SUCCESS
+2026-10-12T16:12:37.822534400 | Alarm ID: 1732079355096 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 7 | SUCCESS
+2026-10-12T16:12:37.835387100 | Alarm ID: 1732079355102 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 1 | SUCCESS
+2026-10-12T16:12:51.946415700 | Alarm ID: 1732079355088 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 5 | Offset: 6 | SUCCESS
+2026-10-12T16:12:52.036199300 | Alarm ID: 1732079355102 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 4 | Offset: 2 | SUCCESS
+2026-10-12T16:12:53.643898900 | Alarm ID: 1732079355096 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 8 | SUCCESS
+2026-10-12T16:12:57.154323700 | Alarm ID: 1732079355093 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 0 | Offset: 9 | SUCCESS
+2026-10-12T17:00:17.930674400 | Alarm ID: 1732079355176 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 5 | Offset: 14 | SUCCESS
+2026-10-12T17:53:37.245817100 | Alarm ID: 1732079355176 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 5 | Offset: 23 | SUCCESS
+2026-10-13T01:18:15.846110200 | Alarm ID: 1732079355441 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 3 | Offset: 32 | SUCCESS
+2026-10-13T01:18:18.761477900 | Alarm ID: 1732079355441 | Alarm Code: 198094422 | Attempt: 1 | Topic: ZTE_TRAPS | Partition: 3 | Offset: 34 | SUCCESS
