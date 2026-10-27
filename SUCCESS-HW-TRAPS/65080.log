@@ -1,6 +1,0 @@
-2026-10-13T00:09:56.831557800 | Alarm ID: 458773586 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 350 | SUCCESS
-2026-10-13T00:10:31.882084 | Alarm ID: 458773586 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 0 | Offset: 351 | SUCCESS
-2026-10-13T00:35:37.737385800 | Alarm ID: 458773880 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 5 | Offset: 379 | SUCCESS
-2026-10-13T00:35:57.845608400 | Alarm ID: 458773880 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 5 | Offset: 380 | SUCCESS
-2026-10-13T06:23:08.096325500 | Alarm ID: 458781636 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 507 | SUCCESS
-2026-10-13T06:23:35.059583 | Alarm ID: 458781636 | Alarm Code: 65080 | Attempt: 1 | Topic: HW_TRAPS | Partition: 1 | Offset: 508 | SUCCESS
